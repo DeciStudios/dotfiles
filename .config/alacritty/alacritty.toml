@@ -1,0 +1,12 @@
+import = [
+    "~/.config/alacritty/themes/themes/nordic.toml"
+]
+
+[window]
+padding = { x = 10, y = 10 }
+#decorations = "None"
+title = "Terminal"
+#opacity = 0.7
+[font]
+normal = { family = "monospace", style = "Regular"}
+size = 13
