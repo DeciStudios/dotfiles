@@ -3,13 +3,13 @@
 # Directory where this script is located
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 BACKUP_DIR="$SCRIPT_DIR/backup"
-SYMLINK_FILE="$SCRIPT_DIR/.foldertracker"
+TRACKER_FILE="$SCRIPT_DIR/.tracker"
 
 # Ensure backup directory exists
 mkdir -p "$BACKUP_DIR"
 
 # List of files and directories to ignore
-IGNORE_LIST=(".gitignore" "setup.sh" ".git" "README.md" ".gitattributes" ".foldertracker" "backup")
+IGNORE_LIST=(".gitignore" "setup.sh" ".git" "README.md" ".gitattributes" ".tracker" "backup")
 
 # Function to check if a file or directory should be ignored
 should_ignore() {
@@ -25,19 +25,19 @@ should_ignore() {
 # Function to create symlinks for dotfiles
 link_dotfiles() {
     echo "Linking dotfiles..."
-    > "$SYMLINK_FILE"  # Clear previous symlink list
+    touch "$TRACKER_FILE"  # Ensure tracker file exists
 
     # Link dotfiles recursively from SCRIPT_DIR to HOME
     link_dotfiles_recursive "$SCRIPT_DIR" "$HOME"
 
-    # Ensure all previously tracked directories are still symlinked
-    if [ -f "$SYMLINK_FILE" ]; then
-        while IFS= read -r dir; do
-            if [ -d "$dir" ] && [ ! -L "$dir" ]; then
-                echo "Re-creating missing symlink for directory $dir"
-                ln -sf "$SCRIPT_DIR${dir#$HOME}" "$dir"
+    # Ensure all previously tracked items are still symlinked
+    if [ -f "$TRACKER_FILE" ]; then
+        while IFS= read -r item; do
+            if [ ! -L "$item" ]; then
+                echo "Re-creating missing symlink for item $item"
+                ln -sf "$SCRIPT_DIR${item#$HOME}" "$item"
             fi
-        done < "$SYMLINK_FILE"
+        done < "$TRACKER_FILE"
     fi
 }
 
@@ -58,20 +58,20 @@ link_dotfiles_recursive() {
             if [ ! -e "$target" ]; then
                 echo "Creating symlink for directory $item -> $target"
                 ln -sf "$item" "$target"
-                echo "$target" >> "$SYMLINK_FILE"
+                echo "$target" >> "$TRACKER_FILE"
             elif [ -L "$target" ]; then
                 continue
             else
                 link_dotfiles_recursive "$item" "$target"
             fi
-        else {
+        else
             if [ -e "$target" ] && [ ! -L "$target" ]; then
                 echo "Backing up existing file: $target"
                 backup_file "$target"
             fi
             echo "Creating symlink for file $item -> $target"
             ln -sf "$item" "$target"
-        }
+            echo "$target" >> "$TRACKER_FILE"
         fi
     done
 }
@@ -88,7 +88,7 @@ backup_file() {
 # Function to remove symlinks and restore backup files
 unlink_dotfiles() {
     echo "Unlinking dotfiles..."
-    handle_symlinked_directories
+    handle_symlinked_items
     unlink_dotfiles_recursive "$SCRIPT_DIR" "$HOME"
 }
 
@@ -125,16 +125,27 @@ unlink_dotfiles_recursive() {
     done
 }
 
-# Function to handle symlinked directories specifically
-handle_symlinked_directories() {
-    if [ -f "$SYMLINK_FILE" ]; then
-        while IFS= read -r dir; do
-            if [ -d "$dir" ] && [ -L "$dir" ]; then
-                echo "Removing symlinked directory: $dir"
-                trash "$dir"
+# Function to handle symlinked items specifically
+handle_symlinked_items() {
+    if [ -f "$TRACKER_FILE" ]; then
+        while IFS= read -r item; do
+            if [ -e "$item" ] && [ -L "$item" ]; then
+                echo "Removing symlinked item: $item"
+                trash "$item"
             fi
-        done < "$SYMLINK_FILE"
+        done < "$TRACKER_FILE"
     fi
+}
+
+# Function to clean untracked symlinks
+clean_symlinks() {
+    echo "Cleaning untracked symlinks..."
+    find "$HOME" -type l | while read -r symlink; do
+        if ! grep -Fxq "$symlink" "$TRACKER_FILE"; then
+            echo "Removing untracked symlink: $symlink"
+            trash "$symlink"
+        fi
+    done
 }
 
 # Function to reinstall dotfiles
@@ -146,7 +157,7 @@ reinstall_dotfiles() {
 
 # Function to display usage
 usage() {
-    echo "Usage: $0 {enable|disable|reinstall}"
+    echo "Usage: $0 {enable|disable|reinstall|clean}"
     exit 1
 }
 
@@ -160,6 +171,9 @@ case "$1" in
         ;;
     reinstall)
         reinstall_dotfiles
+        ;;
+    clean)
+        clean_symlinks
         ;;
     *)
         usage
