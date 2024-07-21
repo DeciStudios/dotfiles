@@ -10,11 +10,25 @@ mkdir -p "$BACKUP_DIR"
 # List of files and directories to ignore
 IGNORE_LIST=(".gitignore" "setup.sh" ".git" "README.md" ".gitattributes")
 
+# List of directories to treat specially (symlink directories only)
+SPECIAL_DIRS=("nvim")  # Add directories here that should be treated as directories
+
 # Function to check if a file or directory should be ignored
 should_ignore() {
-    local file="$1"
+    local item="$1"
     for ignore in "${IGNORE_LIST[@]}"; do
-        if [[ "$file" == *"$ignore"* ]]; then
+        if [[ "$item" == *"$ignore"* ]]; then
+            return 0
+        fi
+    done
+    return 1
+}
+
+# Function to check if a path is a special directory
+is_special_dir() {
+    local dir="$1"
+    for special in "${SPECIAL_DIRS[@]}"; do
+        if [[ "$dir" == *"$special"* ]]; then
             return 0
         fi
     done
@@ -33,10 +47,16 @@ link_dotfiles() {
         fi
 
         if [ -d "$item" ]; then
-            # If it's a directory, create it in the home directory if it doesn't exist
-            mkdir -p "$target"
-            # Recurse into the directory
-            link_dotfiles_recursive "$item" "$target"
+            # If it's a directory and should be treated as such, symlink the directory
+            if is_special_dir "$baseitem"; then
+                mkdir -p "$target"
+                link_dotfiles_recursive "$item" "$target"
+            else
+                # Handle normal directories
+                mkdir -p "$target"
+                # Recurse into the directory
+                link_dotfiles_recursive "$item" "$target"
+            fi
         else
             # Handle files
             if [ -e "$target" ] && [ ! -L "$target" ]; then
