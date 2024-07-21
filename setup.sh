@@ -33,7 +33,10 @@ link_dotfiles() {
     # Ensure all previously tracked items are still symlinked
     if [ -f "$TRACKER_FILE" ]; then
         while IFS= read -r item; do
-            if [ ! -L "$item" ]; then
+            if [ -d "$item" ] && [ -L "$item" ]; then
+                # Skip directories
+                continue
+            elif [ ! -L "$item" ]; then
                 echo "Re-creating missing symlink for item $item"
                 ln -sf "$SCRIPT_DIR${item#$HOME}" "$item"
             fi
@@ -58,9 +61,10 @@ link_dotfiles_recursive() {
             if [ ! -e "$target" ]; then
                 echo "Creating symlink for directory $item -> $target"
                 ln -sf "$item" "$target"
-                echo "$target" >> "$TRACKER_FILE"
+                echo "$target/" >> "$TRACKER_FILE"  # Track as directory
             elif [ -L "$target" ]; then
-                continue
+                # Update tracker if directory
+                grep -q "^$target/$" "$TRACKER_FILE" || echo "$target/" >> "$TRACKER_FILE"
             else
                 link_dotfiles_recursive "$item" "$target"
             fi
@@ -69,9 +73,11 @@ link_dotfiles_recursive() {
                 echo "Backing up existing file: $target"
                 backup_file "$target"
             fi
-            echo "Creating symlink for file $item -> $target"
-            ln -sf "$item" "$target"
-            echo "$target" >> "$TRACKER_FILE"
+            if [ ! -L "$target" ]; then
+                echo "Creating symlink for file $item -> $target"
+                ln -sf "$item" "$target"
+                echo "$target" >> "$TRACKER_FILE"
+            fi
         fi
     done
 }
@@ -88,7 +94,6 @@ backup_file() {
 # Function to remove symlinks and restore backup files
 unlink_dotfiles() {
     echo "Unlinking dotfiles..."
-    handle_symlinked_items
     unlink_dotfiles_recursive "$SCRIPT_DIR" "$HOME"
 }
 
@@ -108,18 +113,23 @@ unlink_dotfiles_recursive() {
         if [ -d "$item" ]; then
             if [ -d "$target" ]; then
                 unlink_dotfiles_recursive "$item" "$target"
+                if [ -L "$target" ]; then
+                    echo "Removing symlink directory: $target"
+                    trash "$target"
+                fi
             fi
         else
             if [ -L "$target" ]; then
                 echo "Removing symlink: $target"
                 trash "$target"
-            fi
-
-            local backup_file="$BACKUP_DIR$(dirname "${target#$HOME}")/$baseitem"
-            if [ -e "$backup_file" ]; then
-                echo "Restoring backup: $backup_file -> $target"
-                mkdir -p "$(dirname "$target")"
-                mv "$backup_file" "$target"
+            else
+                # Restore backup if available
+                local backup_file="$BACKUP_DIR$(dirname "${target#$HOME}")/$baseitem"
+                if [ -e "$backup_file" ]; then
+                    echo "Restoring backup: $backup_file -> $target"
+                    mkdir -p "$(dirname "$target")"
+                    mv "$backup_file" "$target"
+                fi
             fi
         fi
     done
@@ -129,6 +139,10 @@ unlink_dotfiles_recursive() {
 handle_symlinked_items() {
     if [ -f "$TRACKER_FILE" ]; then
         while IFS= read -r item; do
+            if [ -d "$item" ] && [ -L "$item" ]; then
+                continue  # Skip directories, they are handled separately
+            fi
+
             if [ -e "$item" ]; then
                 if [ -L "$item" ]; then
                     if [ ! -e "$(readlink -f "$item")" ]; then
@@ -184,6 +198,7 @@ usage() {
 # Main script execution
 case "$1" in
     enable)
+        handle_symlinked_items  # Remove broken symlinks before adding new ones
         link_dotfiles
         ;;
     disable)
