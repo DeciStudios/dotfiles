@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actions>
+<action>
+	<icon>utilities-terminal</icon>
+	<name>Open Terminal Here</name>
+	<submenu></submenu>
+	<unique-id>1720980286661936-1</unique-id>
+	<command>  wezterm start --cwd %f</command>
+	<description>Example for a custom action</description>
+	<range></range>
+	<patterns>*</patterns>
+	<startup-notify/>
+	<directories/>
+</action>
+<action>
+	<icon></icon>
+	<name>Creates a symbolic link in the current directory.</name>
+	<submenu></submenu>
+	<unique-id>1720980552739238-2</unique-id>
+	<command>/home/jackmortimer/.config/Thunar/custom_actions/symlink.sh %f</command>
+	<description>Creates a symbolic link in the current directory.</description>
+	<range></range>
+	<patterns>*</patterns>
+	<directories/>
+	<audio-files/>
+	<image-files/>
+	<other-files/>
+	<text-files/>
+	<video-files/>
+</action>
+<action>
+	<icon></icon>
+	<name>Open in neovide</name>
+	<submenu></submenu>
+	<unique-id>1721076199233553-1</unique-id>
+	<command>bash -c &apos;if [ -d &quot;%f&quot; ]; then cd &quot;%f&quot; &amp;&amp; neovide .; else neovide &quot;%f&quot;; fi&apos;
+</command>
+	<description>Opens the file/folder in Neovide</description>
+	<range>*</range>
+	<patterns>*</patterns>
+	<directories/>
+	<other-files/>
+	<text-files/>
+</action>
+<action>
+	<icon></icon>
+	<name>Open in nvim</name>
+	<submenu></submenu>
+	<unique-id>1721076222624474-2</unique-id>
+	<command>wezterm start -- bash -c &apos;if [ -d &quot;%f&quot; ]; then cd &quot;%f&quot;; else cd &quot;$(dirname &quot;%f&quot;)&quot;; fi &amp;&amp; nvim &quot;%f&quot;&apos;
+</command>
+	<description>Opens the file/folder in Neovim</description>
+	<range>*</range>
+	<patterns>*</patterns>
+	<directories/>
+	<other-files/>
+	<text-files/>
+</action>
+</actions>

@@ -3,8 +3,9 @@
 # Get the directory of the script
 script_dir=$(dirname "$(readlink -f "$0")")
 
+launcher_type="$1"
 # Set the rofi command with the theme path
-rofi_command="rofi -theme $script_dir/powermenu.rasi"
+rofi_command="rofi -theme $script_dir/type-$launcher_type/powermenu.rasi"
 
 uptime=$(uptime -p | sed -e 's/up //g')
 
@@ -15,13 +16,13 @@ if [[ "$DIR" == "powermenus" ]]; then
 	lock=""
 	suspend=""
 	logout=""
-	ddir="$script_dir"
+	ddir="$script_dir/type-$launcher_type"
 else
 
 # For some reason the Icons are mess up I don't know why but to fix it uncomment section 2 and comment section 1 but if the section 1 icons are mess up uncomment section 2 and comment section 1
 
 	# Buttons
-	layout=`cat "$script_dir/powermenu.rasi" | grep BUTTON | cut -d'=' -f2 | tr -d '[:blank:],*/'`
+	layout=`cat "$script_dir/type-$launcher_type/powermenu.rasi" | grep BUTTON | cut -d'=' -f2 | tr -d '[:blank:],*/'`
 	if [[ "$layout" == "TRUE" ]]; then
   # Section 1
 
@@ -52,7 +53,7 @@ else
 #		suspend="󰒲Sleep"
 #		logout="󰍃 Logout"
 	fi
-	ddir="$script_dir"
+	ddir="$script_dir/type-$launcher_type"
 fi
 
 # Ask for confirmation

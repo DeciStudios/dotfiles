@@ -2,7 +2,7 @@
 
 # Get the directory of the script
 script_dir=$(dirname "$(readlink -f "$0")")
-
+launcher_type="$1"
 rofi \
 	-show drun \
 	-modi run,drun,ssh \
@@ -12,4 +12,4 @@ rofi \
 	-no-drun-show-actions \
 	-terminal wezterm \
 	-kb-cancel Escape \
-	-theme "$script_dir/launcher.rasi"
+	-theme "$script_dir/type-$launcher_type/launcher.rasi"

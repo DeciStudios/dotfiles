@@ -1,5 +1,5 @@
-@import "colors.rasi"
-@import "font.rasi"
+@import "../../styling/.using/font.rasi"
+@import "../../styling/.using/colors.rasi"
 
 * {
     background-color:       @BG;
