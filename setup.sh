@@ -116,7 +116,7 @@ unlink_dotfiles() {
         else
             if [ -L "$target" ]; then
                 echo "Removing symlink: $target"
-                rm "$target"
+                trash "$target"
             fi
 
             if [ -e "$BACKUP_DIR/$baseitem" ]; then
@@ -147,7 +147,7 @@ unlink_dotfiles_recursive() {
         else
             if [ -L "$target" ]; then
                 echo "Removing symlink: $target"
-                rm "$target"
+                trash "$target"
             fi
 
             if [ -e "$BACKUP_DIR/$baseitem" ]; then
