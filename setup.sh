@@ -129,9 +129,15 @@ unlink_dotfiles_recursive() {
 handle_symlinked_items() {
     if [ -f "$TRACKER_FILE" ]; then
         while IFS= read -r item; do
-            if [ -e "$item" ] && [ -L "$item" ]; then
-                echo "Removing symlinked item: $item"
-                trash "$item"
+            if [ -e "$item" ]; then
+                if [ -L "$item" ]; then
+                    if [ ! -e "$(readlink -f "$item")" ]; then
+                        echo "Removing broken symlink: $item"
+                        trash "$item"
+                    fi
+                fi
+            else
+                echo "Removing non-existent entry from tracker: $item"
             fi
         done < "$TRACKER_FILE"
     fi
@@ -140,12 +146,26 @@ handle_symlinked_items() {
 # Function to clean untracked symlinks
 clean_symlinks() {
     echo "Cleaning untracked symlinks..."
-    find "$HOME" -type l | while read -r symlink; do
-        if ! grep -Fxq "$symlink" "$TRACKER_FILE"; then
-            echo "Removing untracked symlink: $symlink"
-            trash "$symlink"
-        fi
-    done
+    if [ -f "$TRACKER_FILE" ]; then
+        local new_tracker_file="$TRACKER_FILE.new"
+        touch "$new_tracker_file"
+
+        while IFS= read -r item; do
+            if [ -L "$item" ]; then
+                local dotfile_path="$SCRIPT_DIR${item#$HOME}"
+                if [ ! -e "$dotfile_path" ]; then
+                    echo "Removing orphaned symlink: $item"
+                    trash "$item"
+                else
+                    echo "$item" >> "$new_tracker_file"
+                fi
+            else
+                echo "$item" >> "$new_tracker_file"
+            fi
+        done < "$TRACKER_FILE"
+
+        mv "$new_tracker_file" "$TRACKER_FILE"
+    fi
 }
 
 # Function to reinstall dotfiles
