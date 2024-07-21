@@ -7,58 +7,111 @@ BACKUP_DIR="$SCRIPT_DIR/backup"
 # Ensure backup directory exists
 mkdir -p "$BACKUP_DIR"
 
-# Function to link dotfiles
+# Function to create symlinks for dotfiles
 link_dotfiles() {
-    for file in "$SCRIPT_DIR"/.*; do
-        # Skip . and .. directories
-        [[ $file == "$SCRIPT_DIR/." || $file == "$SCRIPT_DIR/.." ]] && continue
-        
-        # Get the basename of the file
-        basefile=$(basename "$file")
-        
-        # Target file in the home directory
-        target="$HOME/$basefile"
-        
-        # If it's a directory, recurse into it
-        if [ -d "$file" ]; then
+    echo "Linking dotfiles..."
+    # Iterate through items in the dotfiles directory
+    find "$SCRIPT_DIR" -mindepth 1 -maxdepth 1 | while read -r item; do
+        local baseitem=$(basename "$item")
+        local target="$HOME/$baseitem"
+
+        if [ -d "$item" ]; then
+            # If it's a directory, create it in the home directory if it doesn't exist
             mkdir -p "$target"
-            link_dotfiles "$file"
+            # Recurse into the directory
+            link_dotfiles_recursive "$item" "$target"
         else
-            # Backup existing file if exists
+            # Handle files
             if [ -e "$target" ] && [ ! -L "$target" ]; then
+                # Backup existing file
+                echo "Backing up existing file: $target"
                 mv "$target" "$BACKUP_DIR/"
             fi
             # Create symlink
-            ln -sf "$file" "$target"
+            echo "Creating symlink for $item -> $target"
+            ln -sf "$item" "$target"
         fi
     done
 }
 
-# Function to unlink dotfiles
-unlink_dotfiles() {
-    for file in "$SCRIPT_DIR"/.*; do
-        # Skip . and .. directories
-        [[ $file == "$SCRIPT_DIR/." || $file == "$SCRIPT_DIR/.." ]] && continue
+# Recursive function to handle files and directories
+link_dotfiles_recursive() {
+    local src="$1"
+    local dest="$2"
 
-        # Get the basename of the file
-        basefile=$(basename "$file")
-        
-        # Target file in the home directory
-        target="$HOME/$basefile"
+    find "$src" -mindepth 1 -maxdepth 1 | while read -r item; do
+        local baseitem=$(basename "$item")
+        local target="$dest/$baseitem"
 
-        if [ -L "$target" ]; then
-            rm "$target"
+        if [ -d "$item" ]; then
+            mkdir -p "$target"
+            link_dotfiles_recursive "$item" "$target"
+        else
+            if [ -e "$target" ] && [ ! -L "$target" ]; then
+                echo "Backing up existing file: $target"
+                mv "$target" "$BACKUP_DIR/"
+            fi
+            echo "Creating symlink for $item -> $target"
+            ln -sf "$item" "$target"
         fi
-        
-        # Restore backup if exists
-        if [ -e "$BACKUP_DIR/$basefile" ]; then
-            mv "$BACKUP_DIR/$basefile" "$target"
+    done
+}
+
+# Function to remove symlinks and restore backup files
+unlink_dotfiles() {
+    echo "Unlinking dotfiles..."
+    find "$SCRIPT_DIR" -mindepth 1 -maxdepth 1 | while read -r item; do
+        local baseitem=$(basename "$item")
+        local target="$HOME/$baseitem"
+
+        if [ -d "$item" ]; then
+            if [ -d "$target" ]; then
+                unlink_dotfiles_recursive "$item" "$target"
+            fi
+        else
+            if [ -L "$target" ]; then
+                echo "Removing symlink: $target"
+                rm "$target"
+            fi
+
+            if [ -e "$BACKUP_DIR/$baseitem" ]; then
+                echo "Restoring backup: $BACKUP_DIR/$baseitem -> $target"
+                mv "$BACKUP_DIR/$baseitem" "$target"
+            fi
+        fi
+    done
+}
+
+# Recursive function to handle files and directories for unlinking
+unlink_dotfiles_recursive() {
+    local src="$1"
+    local dest="$2"
+
+    find "$src" -mindepth 1 -maxdepth 1 | while read -r item; do
+        local baseitem=$(basename "$item")
+        local target="$dest/$baseitem"
+
+        if [ -d "$item" ]; then
+            if [ -d "$target" ]; then
+                unlink_dotfiles_recursive "$item" "$target"
+            fi
+        else
+            if [ -L "$target" ]; then
+                echo "Removing symlink: $target"
+                rm "$target"
+            fi
+
+            if [ -e "$BACKUP_DIR/$baseitem" ]; then
+                echo "Restoring backup: $BACKUP_DIR/$baseitem -> $target"
+                mv "$BACKUP_DIR/$baseitem" "$target"
+            fi
         fi
     done
 }
 
 # Function to reinstall dotfiles
 reinstall_dotfiles() {
+    echo "Reinstalling dotfiles..."
     unlink_dotfiles
     link_dotfiles
 }
