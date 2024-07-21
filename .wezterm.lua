@@ -1,4 +1,4 @@
--- Pull in the wezterm API
+-- Pull il n the wezterm API
 local wezterm = require 'wezterm'
 
 -- This will hold the configuration.
@@ -10,7 +10,8 @@ local config = wezterm.config_builder()
 config.font = wezterm.font 'MesloLGS Nerd Font'
 --config.font = wezterm.font 'NotoSans Nerd Font'
 --config.color_scheme = 'Catppuccin Mocha (Gogh)'
-config.color_scheme = 'Everforest Dark (Gogh)'
+--config.color_scheme = 'Everforest Dark (Gogh)'
+config.color_scheme = 'OneDark (base16)'
 config.window_decorations = "TITLE | RESIZE"
 
 -- and finally, return the configuration to wezterm

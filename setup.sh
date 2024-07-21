@@ -3,13 +3,13 @@
 # Directory where this script is located
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 BACKUP_DIR="$SCRIPT_DIR/backup"
-SYMLINK_FILE="$SCRIPT_DIR/symlinked_directories.txt"
+SYMLINK_FILE="$SCRIPT_DIR/.foldertracker"
 
 # Ensure backup directory exists
 mkdir -p "$BACKUP_DIR"
 
 # List of files and directories to ignore
-IGNORE_LIST=("symlinked_directories.txt" ".gitignore" "setup.sh" ".git" "README.md" ".gitattributes")
+IGNORE_LIST=(".gitignore" "setup.sh" ".git" "README.md" ".gitattributes" ".foldertracker" "backup")
 
 # Function to check if a file or directory should be ignored
 should_ignore() {
@@ -26,7 +26,19 @@ should_ignore() {
 link_dotfiles() {
     echo "Linking dotfiles..."
     > "$SYMLINK_FILE"  # Clear previous symlink list
+
+    # Link dotfiles recursively from SCRIPT_DIR to HOME
     link_dotfiles_recursive "$SCRIPT_DIR" "$HOME"
+
+    # Ensure all previously tracked directories are still symlinked
+    if [ -f "$SYMLINK_FILE" ]; then
+        while IFS= read -r dir; do
+            if [ -d "$dir" ] && [ ! -L "$dir" ]; then
+                echo "Re-creating missing symlink for directory $dir"
+                ln -sf "$SCRIPT_DIR${dir#$HOME}" "$dir"
+            fi
+        done < "$SYMLINK_FILE"
+    fi
 }
 
 # Recursive function to handle files and directories
@@ -52,13 +64,14 @@ link_dotfiles_recursive() {
             else
                 link_dotfiles_recursive "$item" "$target"
             fi
-        else
+        else {
             if [ -e "$target" ] && [ ! -L "$target" ]; then
                 echo "Backing up existing file: $target"
                 backup_file "$target"
             fi
             echo "Creating symlink for file $item -> $target"
             ln -sf "$item" "$target"
+        }
         fi
     done
 }
@@ -75,6 +88,7 @@ backup_file() {
 # Function to remove symlinks and restore backup files
 unlink_dotfiles() {
     echo "Unlinking dotfiles..."
+    handle_symlinked_directories
     unlink_dotfiles_recursive "$SCRIPT_DIR" "$HOME"
 }
 
@@ -113,12 +127,14 @@ unlink_dotfiles_recursive() {
 
 # Function to handle symlinked directories specifically
 handle_symlinked_directories() {
-    while IFS= read -r dir; do
-        if [ -d "$dir" ] && [ -L "$dir" ]; then
-            echo "Removing symlinked directory: $dir"
-            trash "$dir"
-        fi
-    done < "$SYMLINK_FILE"
+    if [ -f "$SYMLINK_FILE" ]; then
+        while IFS= read -r dir; do
+            if [ -d "$dir" ] && [ -L "$dir" ]; then
+                echo "Removing symlinked directory: $dir"
+                trash "$dir"
+            fi
+        done < "$SYMLINK_FILE"
+    fi
 }
 
 # Function to reinstall dotfiles
@@ -140,7 +156,6 @@ case "$1" in
         link_dotfiles
         ;;
     disable)
-        handle_symlinked_directories
         unlink_dotfiles
         ;;
     reinstall)
