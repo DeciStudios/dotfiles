@@ -7,13 +7,30 @@ BACKUP_DIR="$SCRIPT_DIR/backup"
 # Ensure backup directory exists
 mkdir -p "$BACKUP_DIR"
 
+# List of files and directories to ignore
+IGNORE_LIST=(".gitignore" "setup.sh" ".git" "README.md" ".gitattributes")
+
+# Function to check if a file or directory should be ignored
+should_ignore() {
+    local file="$1"
+    for ignore in "${IGNORE_LIST[@]}"; do
+        if [[ "$file" == *"$ignore"* ]]; then
+            return 0
+        fi
+    done
+    return 1
+}
+
 # Function to create symlinks for dotfiles
 link_dotfiles() {
     echo "Linking dotfiles..."
-    # Iterate through items in the dotfiles directory
     find "$SCRIPT_DIR" -mindepth 1 -maxdepth 1 | while read -r item; do
         local baseitem=$(basename "$item")
         local target="$HOME/$baseitem"
+
+        if should_ignore "$baseitem"; then
+            continue
+        fi
 
         if [ -d "$item" ]; then
             # If it's a directory, create it in the home directory if it doesn't exist
@@ -43,6 +60,10 @@ link_dotfiles_recursive() {
         local baseitem=$(basename "$item")
         local target="$dest/$baseitem"
 
+        if should_ignore "$baseitem"; then
+            continue
+        fi
+
         if [ -d "$item" ]; then
             mkdir -p "$target"
             link_dotfiles_recursive "$item" "$target"
@@ -63,6 +84,10 @@ unlink_dotfiles() {
     find "$SCRIPT_DIR" -mindepth 1 -maxdepth 1 | while read -r item; do
         local baseitem=$(basename "$item")
         local target="$HOME/$baseitem"
+
+        if should_ignore "$baseitem"; then
+            continue
+        fi
 
         if [ -d "$item" ]; then
             if [ -d "$target" ]; then
@@ -90,6 +115,10 @@ unlink_dotfiles_recursive() {
     find "$src" -mindepth 1 -maxdepth 1 | while read -r item; do
         local baseitem=$(basename "$item")
         local target="$dest/$baseitem"
+
+        if should_ignore "$baseitem"; then
+            continue
+        fi
 
         if [ -d "$item" ]; then
             if [ -d "$target" ]; then
@@ -139,3 +168,4 @@ case "$1" in
 esac
 
 echo "Dotfiles $1 completed."
+
