@@ -9,7 +9,7 @@ SYMLINK_FILE="$SCRIPT_DIR/symlinked_directories.txt"
 mkdir -p "$BACKUP_DIR"
 
 # List of files and directories to ignore
-IGNORE_LIST=(".gitignore" "setup.sh" ".git" "README.md" ".gitattributes")
+IGNORE_LIST=("symlinked_directories.txt" ".gitignore" "setup.sh" ".git" "README.md" ".gitattributes")
 
 # Function to check if a file or directory should be ignored
 should_ignore() {
