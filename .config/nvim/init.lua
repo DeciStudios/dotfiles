@@ -1,31 +1,34 @@
-vim.g.dap_virtual_text = true
-vim.opt.foldmethod = "indent"
-vim.opt.foldlevel=99
-vim.api.nvim_create_autocmd("TermClose", {
-    callback = function()
-       vim.cmd("close")
-    end
-})
+require "core"
 
--- Define a key mapping for :CopilotChat
-vim.api.nvim_set_keymap('n', '<leader>co', ':CopilotChat<CR>', { noremap = true, silent = true })
+local custom_init_path = vim.api.nvim_get_runtime_file("lua/custom/init.lua", false)[1]
 
-
-if vim.g.neovide then
-  -- Helper function for transparency formatting
-  local alpha = function()
-    return string.format("%x", math.floor(255))
-  end
-  -- g:neovide_transparency should be 0 if you want to unify transparency of content and title bar.
-  --vim.g.neovide_transparency = 1.0
-  --vim.g.transparency = 0.8
-  vim.g.neovide_background_color = "#1e1e2e" --.. alpha()
-  vim.keymap.set({ "n", "v" }, "<C-+>", ":lua vim.g.neovide_scale_factor = vim.g.neovide_scale_factor + 0.1<CR>")
-  vim.keymap.set({ "n", "v" }, "<C-->", ":lua vim.g.neovide_scale_factor = vim.g.neovide_scale_factor - 0.1<CR>")
-  vim.keymap.set({ "n" , "v" }, "<C-0>", ":lua vim.g.neovide_scale_factor = 1<CR>")
+if custom_init_path then
+  dofile(custom_init_path)
 end
 
-vim.o.completeopt = "menuone,noselect"
--- Map Enter to accept completion
-vim.api.nvim_set_keymap('i', '<CR>', 'pumvisible() ? "\\<C-y>" : "\\<CR>"', { expr = true, noremap = true })
+require("core.utils").load_mappings()
 
+local lazypath = vim.fn.stdpath "data" .. "/lazy/lazy.nvim"
+
+-- bootstrap lazy.nvim!
+if not vim.loop.fs_stat(lazypath) then
+  require("core.bootstrap").gen_chadrc_template()
+  require("core.bootstrap").lazy(lazypath)
+end
+
+dofile(vim.g.base46_cache .. "defaults")
+vim.opt.rtp:prepend(lazypath)
+
+-- Map Ctrl+Shift+C to copy in normal mode
+vim.api.nvim_set_keymap('n', '<C-S-C>', '"+y', { noremap = true, silent = true })
+
+-- Map Ctrl+Shift+V to paste in normal mode
+vim.api.nvim_set_keymap('n', '<C-S-V>', '"+p', { noremap = true, silent = true })
+
+-- Map Ctrl+Shift+C to copy in visual mode
+vim.api.nvim_set_keymap('x', '<C-S-C>', '"+y', { noremap = true, silent = true })
+
+-- Map Ctrl+Shift+V to paste in insert mode
+vim.api.nvim_set_keymap('i', '<C-S-V>', '<C-R>+', { noremap = true, silent = true })
+
+require "plugins"
