@@ -230,15 +230,25 @@ case "$1" in
             unlink_dotfiles
             rm -f "$ENABLED_FILE"
         else
-            echo "Dotfiles are already disabled. Run 'reinstall' if you need to reset."
+            echo "Dotfiles are already disabled. Run 'enable' to install."
             exit 1
         fi
         ;;
     reinstall)
-        reinstall_dotfiles
+        if [ -f "$ENABLED_FILE" ]; then
+            reinstall_dotfiles
+        else
+            echo "Dotfiles are not installed. Run 'enable' to install."
+            exit 1
+        fi
         ;;
     clean)
-        clean_symlinks
+        if [ -f "$ENABLED_FILE" ]; then
+            clean_symlinks
+        else
+            echo "Dotfiles are not installed. Run 'enable' to install."
+            exit 1
+        fi
         ;;
     *)
         usage

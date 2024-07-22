@@ -2,3 +2,4 @@
 symlinked_directories.txt
 /backup
 .tracker
+.enabled
