@@ -4,12 +4,13 @@
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 BACKUP_DIR="$SCRIPT_DIR/backup"
 TRACKER_FILE="$SCRIPT_DIR/.tracker"
+ENABLED_FILE="$SCRIPT_DIR/.enabled"
 
 # Ensure backup directory exists
 mkdir -p "$BACKUP_DIR"
 
 # List of files and directories to ignore
-IGNORE_LIST=(".gitignore" "setup.sh" ".git" "README.md" ".gitattributes" ".tracker" "backup")
+IGNORE_LIST=(".gitignore" "setup.sh" ".git" "README.md" ".gitattributes" ".tracker" "backup" ".enabled")
 
 # Function to check if a file or directory should be ignored
 should_ignore() {
@@ -27,7 +28,7 @@ link_dotfiles() {
     echo "Linking dotfiles..."
     touch "$TRACKER_FILE"  # Ensure tracker file exists
 
-    # Create symlinks for new or modified dotfiles
+    # Link dotfiles recursively from SCRIPT_DIR to HOME
     link_dotfiles_recursive "$SCRIPT_DIR" "$HOME"
 
     # Ensure all previously tracked items are still symlinked
@@ -59,7 +60,6 @@ link_dotfiles_recursive() {
                 ln -sf "$item" "$target"
                 echo "$target/" >> "$TRACKER_FILE"  # Track as directory
             else
-                # Recursively handle items inside the directory
                 link_dotfiles_recursive "$item" "$target"
             fi
         else
@@ -96,9 +96,16 @@ unlink_dotfiles() {
         local actual_item="${item%/}"  # Remove trailing '/' if present
 
         if [ -d "$actual_item" ] && [ -L "$actual_item" ]; then
-            # Handle directories
-            echo "Removing symlink directory: $actual_item"
-            trash "$actual_item"
+            if [ "$(basename "$actual_item")" == "/" ]; then
+                # Handle directories
+                echo "Removing symlink directory: $actual_item"
+                trash "$actual_item"
+            else
+                # Recursive cleanup for directories
+                unlink_dotfiles_recursive "$actual_item"
+                echo "Removing symlink directory: $actual_item"
+                trash "$actual_item"
+            fi
         elif [ -L "$actual_item" ]; then
             echo "Removing symlink: $actual_item"
             trash "$actual_item"
@@ -125,24 +132,45 @@ unlink_dotfiles() {
     mv "$new_tracker_file" "$TRACKER_FILE"
 }
 
+# Recursive function to handle files and directories for unlinking
+unlink_dotfiles_recursive() {
+    local dest="$1"
+
+    find "$dest" -mindepth 1 -maxdepth 1 | while IFS= read -r item; do
+        local actual_item="${item%/}"  # Remove trailing '/' if present
+
+        if [ -L "$actual_item" ] && [ -d "$actual_item" ]; then
+            # Check if item is a symlink to a directory
+            if [ "$(basename "$actual_item")" == "/" ]; then
+                echo "Removing symlink directory: $actual_item"
+                trash "$actual_item"
+            else
+                unlink_dotfiles_recursive "$actual_item"
+                echo "Removing symlink directory: $actual_item"
+                trash "$actual_item"
+            fi
+        elif [ -L "$actual_item" ]; then
+            echo "Removing symlink: $actual_item"
+            trash "$actual_item"
+        fi
+    done
+}
+
 # Function to handle symlinked items specifically
 handle_symlinked_items() {
     if [ -f "$TRACKER_FILE" ]; then
-        local temp_file="$TRACKER_FILE.tmp"
-        touch "$temp_file"
-
         while IFS= read -r item; do
             local actual_item="${item%/}"  # Remove trailing '/' if present
+
+            if [ -d "$actual_item" ] && [ -L "$actual_item" ]; then
+                continue  # Skip directories, they are handled separately
+            fi
 
             if [ -L "$actual_item" ] && [ ! -e "$actual_item" ]; then
                 echo "Removing broken symlink: $actual_item"
                 trash "$actual_item"
-            else
-                echo "$item" >> "$temp_file"
             fi
         done < "$TRACKER_FILE"
-
-        mv "$temp_file" "$TRACKER_FILE"
     fi
 }
 
@@ -189,11 +217,22 @@ usage() {
 # Main script execution
 case "$1" in
     enable)
-        handle_symlinked_items  # Remove broken symlinks before adding new ones
-        link_dotfiles
+        if [ -f "$ENABLED_FILE" ]; then
+            echo "Dotfiles are already enabled. Run 'reinstall' if new files have been added."
+            exit 1
+        else
+            link_dotfiles
+            touch "$ENABLED_FILE"
+        fi
         ;;
     disable)
-        unlink_dotfiles
+        if [ -f "$ENABLED_FILE" ]; then
+            unlink_dotfiles
+            rm -f "$ENABLED_FILE"
+        else
+            echo "Dotfiles are already disabled. Run 'reinstall' if you need to reset."
+            exit 1
+        fi
         ;;
     reinstall)
         reinstall_dotfiles
