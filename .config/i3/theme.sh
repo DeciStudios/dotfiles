@@ -13,7 +13,7 @@ CONFIG_DIR="$HOME/.config/i3"
 POLYBAR_CONFIG="$HOME/.config/polybar/config.ini"
 NVIM_CONFIG="$HOME/.config/nvim/lua/custom/chadrc.lua"
 WEZTERM_CONFIG="$HOME/.config/wezterm/wezterm.lua"
-WEZTERM_COLOR_SCHEMES="$HOME/.config/wezterm/color_schemes.lua"
+WEZTERM_COLOR_SCHEMES="$HOME/.config/wezterm/colors.lua"
 
 # Ensure the color theme file exists
 if [ ! -f "${CONFIG_DIR}/colors/${THEME}.conf" ]; then
@@ -45,11 +45,16 @@ echo "Updated i3 config with colors from ${THEME}"
 
 # Ensure WezTerm color schemes file is sourced correctly
 if ! grep -q "local color_schemes = require 'color_schemes'" "$WEZTERM_CONFIG"; then
-    echo "local color_schemes = require 'color_schemes'" >> "$WEZTERM_CONFIG"
+    sed -i "/local wezterm = require 'wezterm'/a local color_schemes = require 'color_schemes'" "$WEZTERM_CONFIG"
 fi
 
 # Update WezTerm config
-sed -i "s/config.color_scheme = color_schemes\[\".*\"\]/config.color_scheme = color_schemes[\"${THEME}\"]/" "$WEZTERM_CONFIG"
+if grep -q "config.color_scheme = color_schemes\[\".*\"\]" "$WEZTERM_CONFIG"; then
+    sed -i "s/config.color_scheme = color_schemes\[\".*\"\]/config.color_scheme = color_schemes[\"${THEME}\"]/" "$WEZTERM_CONFIG"
+else
+    sed -i "/local config = wezterm.config_builder()/a config.color_scheme = color_schemes[\"${THEME}\"]" "$WEZTERM_CONFIG"
+fi
+
 echo "Updated WezTerm config to use ${THEME}"
 
 # Reload and restart i3 to apply changes
