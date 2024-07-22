@@ -87,43 +87,35 @@ backup_file() {
 # Function to remove symlinks and restore backup files
 unlink_dotfiles() {
     echo "Unlinking dotfiles..."
-    unlink_dotfiles_recursive "$HOME"
-}
+    local new_tracker_file="$TRACKER_FILE.new"
+    touch "$new_tracker_file"
 
-# Recursive function to handle files and directories for unlinking
-unlink_dotfiles_recursive() {
-    local dest="$1"
-
+    # Process tracker file and remove symlinks
     while IFS= read -r item; do
-        if [ -d "$item" ] && [ -L "$item" ]; then
-            if [ -d "$item" ]; then
-                # Handle directories
-                while IFS= read -r sub_item; do
-                    unlink_dotfiles_recursive "$sub_item"
-                done < <(find "$item" -mindepth 1 -maxdepth 1)
-            fi
-            echo "Removing symlink directory: $item"
-            trash "$item"
-        elif [ -L "$item" ]; then
-            echo "Removing symlink: $item"
-            trash "$item"
+        local actual_item="${item%/}"  # Remove trailing '/' if present
+
+        if [ -d "$actual_item" ] && [ -L "$actual_item" ]; then
+            echo "Removing symlink directory: $actual_item"
+            trash "$actual_item"
+        elif [ -L "$actual_item" ]; then
+            echo "Removing symlink: $actual_item"
+            trash "$actual_item"
         else
             # Restore backup if available
-            local backup_file="$BACKUP_DIR$(dirname "${item#$HOME}")/$(basename "$item")"
+            local backup_file="$BACKUP_DIR$(dirname "${actual_item#$HOME}")/$(basename "$actual_item")"
             if [ -e "$backup_file" ]; then
-                echo "Restoring backup: $backup_file -> $item"
-                mkdir -p "$(dirname "$item")"
-                mv "$backup_file" "$item"
+                echo "Restoring backup: $backup_file -> $actual_item"
+                mkdir -p "$(dirname "$actual_item")"
+                mv "$backup_file" "$actual_item"
             fi
         fi
     done < "$TRACKER_FILE"
 
     # Remove entries from tracker that don't exist anymore
-    local new_tracker_file="$TRACKER_FILE.new"
-    touch "$new_tracker_file"
-
     while IFS= read -r item; do
-        if [ -e "$item" ] || [ -L "$item" ]; then
+        local actual_item="${item%/}"  # Remove trailing '/' if present
+
+        if [ -e "$actual_item" ] || [ -L "$actual_item" ]; then
             echo "$item" >> "$new_tracker_file"
         fi
     done < "$TRACKER_FILE"
@@ -131,17 +123,43 @@ unlink_dotfiles_recursive() {
     mv "$new_tracker_file" "$TRACKER_FILE"
 }
 
+# Recursive function to handle files and directories for unlinking
+unlink_dotfiles_recursive() {
+    local dest="$1"
+
+    find "$dest" -mindepth 1 -maxdepth 1 | while IFS= read -r item; do
+        local actual_item="${item%/}"  # Remove trailing '/' if present
+
+        if [ -L "$actual_item" ] && [ -d "$actual_item" ]; then
+            # Check if item is a symlink to a directory
+            if [ "$(basename "$actual_item")" == "/" ]; then
+                echo "Removing symlink directory: $actual_item"
+                trash "$actual_item"
+            else
+                unlink_dotfiles_recursive "$actual_item"
+                echo "Removing symlink directory: $actual_item"
+                trash "$actual_item"
+            fi
+        elif [ -L "$actual_item" ]; then
+            echo "Removing symlink: $actual_item"
+            trash "$actual_item"
+        fi
+    done
+}
+
 # Function to handle symlinked items specifically
 handle_symlinked_items() {
     if [ -f "$TRACKER_FILE" ]; then
         while IFS= read -r item; do
-            if [ -d "$item" ] && [ -L "$item" ]; then
+            local actual_item="${item%/}"  # Remove trailing '/' if present
+
+            if [ -d "$actual_item" ] && [ -L "$actual_item" ]; then
                 continue  # Skip directories, they are handled separately
             fi
 
-            if [ -L "$item" ] && [ ! -e "$item" ]; then
-                echo "Removing broken symlink: $item"
-                trash "$item"
+            if [ -L "$actual_item" ] && [ ! -e "$actual_item" ]; then
+                echo "Removing broken symlink: $actual_item"
+                trash "$actual_item"
             fi
         done < "$TRACKER_FILE"
     fi
@@ -155,11 +173,13 @@ clean_symlinks() {
         touch "$new_tracker_file"
 
         while IFS= read -r item; do
-            if [ -L "$item" ]; then
-                local dotfile_path="$SCRIPT_DIR${item#$HOME}"
+            local actual_item="${item%/}"  # Remove trailing '/' if present
+
+            if [ -L "$actual_item" ]; then
+                local dotfile_path="$SCRIPT_DIR${actual_item#$HOME}"
                 if [ ! -e "$dotfile_path" ]; then
-                    echo "Removing orphaned symlink: $item"
-                    trash "$item"
+                    echo "Removing orphaned symlink: $actual_item"
+                    trash "$actual_item"
                 else
                     echo "$item" >> "$new_tracker_file"
                 fi
