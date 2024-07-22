@@ -1,4 +1,4 @@
-local M
+local M = {}
 M.onedark = "OneDark (base16)"
 M.nord = "Nord (Gogh)"
 M.catppuccin = "Catppuccin Mocha (Gogh)"

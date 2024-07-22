@@ -13,6 +13,7 @@ CONFIG_DIR="$HOME/.config/i3"
 POLYBAR_CONFIG="$HOME/.config/polybar/config.ini"
 NVIM_CONFIG="$HOME/.config/nvim/lua/custom/chadrc.lua"
 WEZTERM_CONFIG="$HOME/.config/wezterm/wezterm.lua"
+WEZTERM_COLOR_SCHEMES="$HOME/.config/wezterm/color_schemes.lua"
 
 # Ensure the color theme file exists
 if [ ! -f "${CONFIG_DIR}/colors/${THEME}.conf" ]; then
@@ -22,9 +23,11 @@ fi
 
 # Update Polybar config
 sed -i "s|include-file = \"colors/.*.ini\"|include-file = \"colors/${THEME}.ini\"|" "$POLYBAR_CONFIG"
+echo "Updated Polybar config to use ${THEME}"
 
 # Update Neovim config
 sed -i "s/theme = '.*'/theme = '${THEME}'/" "$NVIM_CONFIG"
+echo "Updated Neovim config to use ${THEME}"
 
 # Get the colors from the theme file
 THEME_COLORS=$(grep -E 'client\.focused|client\.unfocused|client\.focused_inactive|client\.urgent' "${CONFIG_DIR}/colors/${THEME}.conf")
@@ -32,15 +35,22 @@ THEME_COLORS=$(grep -E 'client\.focused|client\.unfocused|client\.focused_inacti
 # Update i3 config
 sed -i "s/set \$colorscheme .*/set \$colorscheme ${THEME}/" "$CONFIG_DIR/config"
 
-# Backup and update color lines in i3 config
+# Remove existing color lines and append the new ones
 for COLOR_TYPE in focused unfocused focused_inactive urgent; do
     sed -i "/client.${COLOR_TYPE}/d" "$CONFIG_DIR/config"
 done
 
 echo "$THEME_COLORS" >> "$CONFIG_DIR/config"
+echo "Updated i3 config with colors from ${THEME}"
+
+# Ensure WezTerm color schemes file is sourced correctly
+if ! grep -q "local color_schemes = require 'color_schemes'" "$WEZTERM_CONFIG"; then
+    echo "local color_schemes = require 'color_schemes'" >> "$WEZTERM_CONFIG"
+fi
 
 # Update WezTerm config
 sed -i "s/config.color_scheme = color_schemes\[\".*\"\]/config.color_scheme = color_schemes[\"${THEME}\"]/" "$WEZTERM_CONFIG"
+echo "Updated WezTerm config to use ${THEME}"
 
 # Reload and restart i3 to apply changes
 i3-msg reload
