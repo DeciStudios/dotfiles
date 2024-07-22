@@ -44,8 +44,8 @@ echo "$THEME_COLORS" >> "$CONFIG_DIR/config"
 echo "Updated i3 config with colors from ${THEME}"
 
 # Ensure WezTerm color schemes file is sourced correctly
-if ! grep -q "local color_schemes = require 'color_schemes'" "$WEZTERM_CONFIG"; then
-    sed -i "/local wezterm = require 'wezterm'/a local color_schemes = require 'color_schemes'" "$WEZTERM_CONFIG"
+if ! grep -q "local color_schemes = require 'colors'" "$WEZTERM_CONFIG"; then
+    sed -i "/local wezterm = require 'wezterm'/a local color_schemes = require 'colors'" "$WEZTERM_CONFIG"
 fi
 
 # Update WezTerm config

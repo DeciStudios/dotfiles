@@ -1,11 +1,12 @@
 -- Pull il n the wezterm API
 local wezterm = require 'wezterm'
+
 local color_schemes = require 'colors'
 
 
 -- This will hold the configuration.
 local config = wezterm.config_builder()
-config.color_scheme = color_schemes["onedark"]
+config.color_scheme = color_schemes["everforest"]
 
 -- This is where you actually apply your config choices
 
