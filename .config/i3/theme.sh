@@ -12,6 +12,7 @@ THEME=$1
 CONFIG_DIR="$HOME/.config/i3"
 POLYBAR_CONFIG="$HOME/.config/polybar/config.ini"
 NVIM_CONFIG="$HOME/.config/nvim/lua/custom/chadrc.lua"
+WEZTERM_CONFIG="$HOME/.config/wezterm/wezterm.lua"
 
 # Ensure the color theme file exists
 if [ ! -f "${CONFIG_DIR}/colors/${THEME}.conf" ]; then
@@ -38,8 +39,11 @@ done
 
 echo "$THEME_COLORS" >> "$CONFIG_DIR/config"
 
+# Update WezTerm config
+sed -i "s/config.color_scheme = color_schemes\[\".*\"\]/config.color_scheme = color_schemes[\"${THEME}\"]/" "$WEZTERM_CONFIG"
+
 # Reload and restart i3 to apply changes
 i3-msg reload
 i3-msg restart
 
-echo "Theme changed to ${THEME} and i3 has been restarted"
+echo "Theme changed to ${THEME}, i3 has been restarted, and WezTerm color scheme has been updated"
