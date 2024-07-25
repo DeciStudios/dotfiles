@@ -65,6 +65,9 @@ local plugins = {
   },
   {
     "hrsh7th/nvim-cmp",
+    dependencies = {
+      "zbirenbaum/copilot-cmp",
+    },
     opts = function()
       local cmp = require "cmp"
       local M = require "plugins.configs.cmp"
@@ -73,8 +76,15 @@ local plugins = {
         behavior = cmp.ConfirmBehavior.Insert,
         select = false,
       }
-      table.insert(M.sources, {name = "crates"})
-      table.insert(M.sources, {name="copilot"})
+      M.sources = {
+        {name="crates",group_index = 2},
+        { name = "nvim_lsp", group_index = 2 },
+        { name = "copilot",  group_index = 2 },
+        { name = "luasnip",  group_index = 2 },
+        { name = "buffer",   group_index = 2 },
+        { name = "nvim_lua", group_index = 2 },
+        { name = "path",     group_index = 2 },
+      }
       return M
     end,
   },
@@ -97,7 +107,10 @@ local plugins = {
     cmd = "Copilot",
     event = "InsertEnter",
     config = function()
-      require("copilot").setup({})
+      require("copilot").setup({
+        suggestion={enabled=false},
+        panel={enabled=false}
+      })
     end,
   },
   {
@@ -158,9 +171,10 @@ local plugins = {
 
   {
     "zbirenbaum/copilot-cmp",
+    event = "InsertEnter",
     dependencies = "zbirenbaum/copilot.lua",
     config = function ()
-      require("copilot_cmp").setup()
+      require("copilot_cmp").setup({})
     end
   },
 

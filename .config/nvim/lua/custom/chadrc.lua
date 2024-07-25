@@ -5,7 +5,7 @@ local M = {}
 
 
 M.ui = {
-  theme = 'everforest',
+  theme = 'tomorrow_night',
   transparency = true,
   statusline = {
     theme = "minimal",
@@ -23,6 +23,6 @@ if vim.g.neovide then
   vim.g.neovide_font_size = 12
   M.ui.transparency  = false
 end
-
+vim.g.nvchad_theme = M.ui.theme
 
 return M

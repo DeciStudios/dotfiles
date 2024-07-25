@@ -38,4 +38,22 @@ M.dap_python = {
   }
 }
 
+M.copilot = {
+  plugin = true,
+  n = {
+    ["<leader>gc"] = {
+      function()
+        require("CopilotChat").open()
+      end,
+      "open copilot chat"
+    },
+    ["<leader>go"] = {
+      function ()
+        require("copilot").toggle()
+      end,
+      "toggle copilot"
+    }
+  }
+}
+
 return M

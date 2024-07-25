@@ -6,7 +6,7 @@ local color_schemes = require 'colors'
 
 -- This will hold the configuration.
 local config = wezterm.config_builder()
-config.color_scheme = color_schemes["everforest"]
+config.color_scheme = color_schemes["tomorrow_night"]
 
 -- This is where you actually apply your config choices
 
