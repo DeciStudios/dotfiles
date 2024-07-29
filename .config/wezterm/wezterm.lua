@@ -6,12 +6,13 @@ local color_schemes = require 'colors'
 
 -- This will hold the configuration.
 local config = wezterm.config_builder()
-config.color_scheme = color_schemes["tomorrow_night"]
+config.color_scheme = color_schemes["vscode_dark"]
 
 -- This is where you actually apply your config choices
 
 -- For example, changing the color scheme:
-config.font = wezterm.font 'MesloLGS Nerd Font'
+config.font = wezterm.font "DroidSansM Nerd Font Mono"
+config.font_size = 11.0
 config.window_decorations = "TITLE | RESIZE"
 config.automatically_reload_config = true
 -- and finally, return the configuration to wezterm

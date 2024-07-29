@@ -7,5 +7,5 @@ then
     pkill picom
 else
     # If picom is not running, start it
-    picom &
+    picom --backend glx &
 fi

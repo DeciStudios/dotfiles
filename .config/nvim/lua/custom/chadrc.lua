@@ -5,7 +5,7 @@ local M = {}
 
 
 M.ui = {
-  theme = 'tomorrow_night',
+  theme = 'vscode_dark',
   transparency = true,
   statusline = {
     theme = "minimal",
