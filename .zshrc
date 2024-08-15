@@ -90,10 +90,10 @@ plugins=(
 source $ZSH/oh-my-zsh.sh
 
 
-
+fpath+=$HOME/.oh-my-zsh/custom/themes/pure
 autoload -U promptinit; promptinit
 prompt pure
-. ~/.zsh/z/z.sh
+. ~/.oh-my-zsh/custom/plugins/z/zsh-z.plugin.zsh
 # User configuration
 
 # export MANPATH="/usr/local/man:$MANPATH"
