@@ -1,0 +1,6 @@
+.bashrc
+.zshrc
+.zshrc.pre-oh-my-zsh
+.local/bin/neovide
+.config/nvim/
+.config/tmux/

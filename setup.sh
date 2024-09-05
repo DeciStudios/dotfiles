@@ -1,5 +1,6 @@
 #!/bin/bash
 
+
 # Directory where this script is located
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 BACKUP_DIR="$SCRIPT_DIR/backup"
@@ -10,7 +11,7 @@ ENABLED_FILE="$SCRIPT_DIR/.enabled"
 mkdir -p "$BACKUP_DIR"
 
 # List of files and directories to ignore
-IGNORE_LIST=(".gitignore" "setup.sh" ".git" "README.md" ".gitattributes" ".tracker" "backup" ".enabled")
+IGNORE_LIST=(".gitignore" "setup.sh" ".git" "README.md" ".gitattributes" ".tracker" "backup" ".enabled" "config")
 
 # Function to check if a file or directory should be ignored
 should_ignore() {
@@ -21,6 +22,35 @@ should_ignore() {
         fi
     done
     return 1
+}
+
+# Function to link dotfiles using a config file
+link_dotfiles_from_config() {
+    local config_file="$SCIPT_DIR/config/$1"
+    echo "Linking dotfiles from config file: $config_file..."
+
+    while IFS= read -r line || [ -n "$line" ]; do
+        # Skip empty lines and comments
+        [[ -z "$line" || "$line" =~ ^#.*$ ]] && continue
+        
+        local src="$SCRIPT_DIR/$line"
+        local dest="$HOME/$line"
+
+        if [ ! -e "$src" ]; then
+            echo "Warning: $src does not exist, skipping."
+            continue
+        fi
+
+        if [ -e "$dest" ] && [ ! -L "$dest" ]; then
+            echo "Backing up existing file: $dest"
+            backup_file "$dest"
+        fi
+
+        mkdir -p "$(dirname "$dest")"
+        echo "Creating symlink for $src -> $dest"
+        ln -sf "$src" "$dest"
+        echo "$dest" >> "$TRACKER_FILE"
+    done < "$config_file"
 }
 
 # Function to create symlinks for dotfiles
@@ -84,6 +114,7 @@ backup_file() {
     mkdir -p "$backup_target"
     mv "$file" "$backup_target/"
 }
+
 
 # Function to remove symlinks and restore backup files
 unlink_dotfiles() {
@@ -210,7 +241,7 @@ reinstall_dotfiles() {
 
 # Function to display usage
 usage() {
-    echo "Usage: $0 {enable|disable|reinstall|clean}"
+    echo "Usage: $0 {enable|disable|reinstall|clean} [config_file]"
     exit 1
 }
 
@@ -221,7 +252,11 @@ case "$1" in
             echo "Dotfiles are already enabled. Run 'reinstall' if new files have been added."
             exit 1
         else
-            link_dotfiles
+            if [ -n "$2" ]; then
+                link_dotfiles_from_config "$2"
+            else
+                link_dotfiles
+            fi
             touch "$ENABLED_FILE"
         fi
         ;;
@@ -256,4 +291,3 @@ case "$1" in
 esac
 
 echo "Dotfiles $1 completed."
-
