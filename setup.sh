@@ -26,7 +26,7 @@ should_ignore() {
 
 # Function to link dotfiles using a config file
 link_dotfiles_from_config() {
-    local config_file="$SCIPT_DIR/config/$1"
+    local config_file="$SCRIPT_DIR/config/$1"
     echo "Linking dotfiles from config file: $config_file..."
 
     while IFS= read -r line || [ -n "$line" ]; do
