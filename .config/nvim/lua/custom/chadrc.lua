@@ -5,8 +5,8 @@ local M = {}
 
 
 M.ui = {
-  theme = 'vscode_dark',
-  transparency = true,
+  theme = 'onedark',
+  transparency = false,
   statusline = {
     theme = "minimal",
     separator_style = "round",
