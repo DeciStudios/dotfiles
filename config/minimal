@@ -4,3 +4,6 @@
 .config/nvim
 .config/tmux
 .local/bin/neovide
+.zsh
+.z
+.zsh_history
