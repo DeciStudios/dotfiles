@@ -9,7 +9,11 @@ ENABLED_FILE="$SCRIPT_DIR/.enabled"
 
 # Ensure backup directory exists
 mkdir -p "$BACKUP_DIR"
-
+# Ensure main user directories exist
+mkdir -p "$HOME/.config"
+mkdir -p "$HOME/.local"
+mkdir -p "$HOME/.local/bin"
+mkdir -p "$HOME/.local/share"
 # List of files and directories to ignore
 IGNORE_LIST=(".gitignore" "setup.sh" ".git" "README.md" ".gitattributes" ".tracker" "backup" ".enabled" "config")
 
