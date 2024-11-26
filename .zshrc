@@ -71,7 +71,7 @@ ZSH_THEME="robbyrussell"
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
 export PATH=/usr/local/share/npm/bin:$PATH
-source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source /usr/share/zsh-syntax-highlighting
 
 plugins=(
   git
@@ -86,7 +86,6 @@ plugins=(
   colored-man-pages
   colorize
   cp
-  zsh-syntax-highlighting
   zsh-autosuggestions
 )
 
@@ -95,8 +94,13 @@ source $ZSH/oh-my-zsh.sh
 
 export VK_ICD_FILENAMES=/usr/share/vulkan/icd.d/radeon_icd.x86_64.json
 
+
+fpath+="$HOME/.zsh/pure"
 autoload -U promptinit; promptinit
 prompt pure
+
+
+
 . ~/.zsh/z/z.sh
 # User configuration
 
@@ -130,6 +134,10 @@ prompt pure
 export PATH="$HOME/.local/bin:$PATH"
 
 alias gksu='pkexec env DISPLAY=$DISPLAY XAUTHORITY=$XAUTHORITY'
+
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+
+eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
