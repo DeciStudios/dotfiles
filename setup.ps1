@@ -1,264 +1,327 @@
-param(
-    [Parameter(Mandatory=$true)]
-    [ValidateSet("enable","disable","reinstall","clean")]
-    [string]$action,
+# setup.ps1
+# Run with PowerShell 5.1. Ensure you have proper privileges for creating symbolic links.
+$ErrorActionPreference = "Stop"
 
-    [string]$configFile
-)
-
+# -----------------------------
+# Global Variables
+# -----------------------------
 # Directory where this script is located
-$SCRIPT_DIR = Split-Path -Path $MyInvocation.MyCommand.Definition
-$BACKUP_DIR = Join-Path $SCRIPT_DIR "backup"
-$TRACKER_FILE = Join-Path $SCRIPT_DIR ".tracker"
-$ENABLED_FILE = Join-Path $SCRIPT_DIR ".enabled"
+$scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Definition
+$backupDir  = Join-Path $scriptDir "backup"
+$trackerFile = Join-Path $scriptDir ".tracker"
+$enabledFile = Join-Path $scriptDir ".enabled"
 
 # Ensure backup directory exists
-if (-not (Test-Path -Path $BACKUP_DIR)) {
-    New-Item -Path $BACKUP_DIR -ItemType Directory | Out-Null
-}
-
-# Set user home directory (you might want to change this if you prefer a different location)
-$userHome = [Environment]::GetFolderPath("MyDocuments")
+if (-not (Test-Path $backupDir)) { New-Item -ItemType Directory -Path $backupDir | Out-Null }
 
 # Ensure main user directories exist
 $dirsToEnsure = @(
-    Join-Path $userHome ".config",
-    Join-Path $userHome ".local",
-    Join-Path $userHome ".local\bin",
-    Join-Path $userHome ".local\share"
+    "$HOME\.config",
+    "$HOME\.local",
+    "$HOME\.local\bin",
+    "$HOME\.local\share"
 )
 foreach ($dir in $dirsToEnsure) {
-    if (-not (Test-Path -Path $dir)) {
-        New-Item -Path $dir -ItemType Directory | Out-Null
-    }
+    if (-not (Test-Path $dir)) { New-Item -ItemType Directory -Path $dir | Out-Null }
 }
 
 # List of files and directories to ignore
-$IGNORE_LIST = @(".gitignore", "setup.ps1", ".git", "README.md", ".gitattributes", ".tracker", "backup", ".enabled", "config")
+$ignoreList = @(
+    ".gitignore", "setup.sh", ".git", "README.md",
+    ".gitattributes", ".tracker", "backup", ".enabled", "config"
+)
+
+# -----------------------------
+# Helper Functions
+# -----------------------------
 
 function Should-Ignore {
     param([string]$file)
-    return ($IGNORE_LIST -contains $file)
+    return $ignoreList -contains $file
 }
 
-# Function to link dotfiles from a config file
-function Link-DotfilesFromConfig {
-    param([string]$configFile)
-    Write-Host "Linking dotfiles from config file: $configFile..."
+function Is-Symlink {
+    param([string]$path)
+    if (Test-Path $path) {
+        $item = Get-Item $path -Force
+        return ( $item.Attributes -band [System.IO.FileAttributes]::ReparsePoint ) -ne 0
+    }
+    return $false
+}
 
-    Get-Content $configFile | ForEach-Object {
-        $line = $_.Trim()
-        if (-not $line -or $line -match '^\s*#') { return }
-
-        $src = Join-Path $SCRIPT_DIR $line
-        Write-Host "line: $line"
-        Write-Host "src: $src"
-        Write-Host "SCRIPT_DIR: $SCRIPT_DIR"
-        $dest = Join-Path $userHome $line
-
-        if (-not (Test-Path -Path $src)) {
-            Write-Warning "Warning: $src does not exist, skipping."
-            return
-        }
-
-        if (Test-Path -Path $dest -and -not (Test-Path -Path $dest -PathType SymbolicLink)) {
-            Write-Host "Backing up existing file: $dest"
-            Backup-File -file $dest
-        }
-
-        $destDir = Split-Path -Path $dest -Parent
-        if (-not (Test-Path -Path $destDir)) {
-            New-Item -Path $destDir -ItemType Directory | Out-Null
-        }
-
-        Write-Host "Creating symlink for $src -> $dest"
-        New-Item -Path $dest -ItemType SymbolicLink -Target $src -Force | Out-Null
-        Add-Content -Path $TRACKER_FILE -Value $dest
+function Trash-Item {
+    param([string]$path)
+    # "Trash" the item by forcefully removing it.
+    if (Test-Path $path) {
+        Remove-Item $path -Recurse -Force -ErrorAction SilentlyContinue
     }
 }
 
-# Function to create symlinks for dotfiles recursively
+function Backup-File {
+    param([string]$file)
+    $relativePath = $file.Substring($HOME.Length)
+    $backupTargetDir = Join-Path $backupDir (Split-Path $relativePath -Parent)
+    if (-not (Test-Path $backupTargetDir)) {
+        New-Item -ItemType Directory -Path $backupTargetDir | Out-Null
+    }
+    Write-Output "Backing up existing file: $file"
+    Move-Item $file -Destination $backupTargetDir -Force
+}
+
+# -----------------------------
+# Dotfiles Linking Functions
+# -----------------------------
+
+function Link-DotfilesFromConfig {
+    param([string]$configName)
+    $configFilePath = Join-Path (Join-Path $scriptDir "config") $configName
+    Write-Output "Linking dotfiles from config file: $configFilePath..."
+    if (-not (Test-Path $configFilePath)) {
+        Write-Output "Config file $configFilePath not found."
+        return
+    }
+    Get-Content $configFilePath | ForEach-Object {
+        $line = $_.Trim()
+        if ([string]::IsNullOrEmpty($line) -or $line -match "^\s*#") { return }
+        $src  = Join-Path $scriptDir $line
+        Write-Output "line: $line"
+        Write-Output "src: $src"
+        Write-Output "scriptDir: $scriptDir"
+        $dest = Join-Path $HOME $line
+
+        if (-not (Test-Path $src)) {
+            Write-Output "Warning: $src does not exist, skipping."
+            return
+        }
+
+        if ((Test-Path $dest -PathType Any) -and (-not (Is-Symlink $dest))) {
+            Backup-File $dest
+        }
+
+        $destDir = Split-Path $dest -Parent
+        if (-not (Test-Path $destDir)) { New-Item -ItemType Directory -Path $destDir -Force | Out-Null }
+
+        Write-Output "Creating symlink for $src -> $dest"
+        if (Test-Path $dest) { Remove-Item $dest -Force }
+        New-Item -ItemType SymbolicLink -Path $dest -Target $src -Force | Out-Null
+        Add-Content -Path $trackerFile -Value $dest
+    }
+}
+
 function Link-DotfilesRecursive {
     param(
         [string]$src,
         [string]$dest
     )
-    Get-ChildItem -Path $src -Force -Directory -Exclude $IGNORE_LIST | ForEach-Object {
-        $item = $_
-        $baseitem = $item.Name
+    Get-ChildItem -LiteralPath $src -Force | ForEach-Object {
+        $baseitem = $_.Name
         $target = Join-Path $dest $baseitem
 
-        if (Should-Ignore -file $baseitem) {
-            return
-        }
+        if (Should-Ignore $baseitem) { return }
 
-        if ($item.PSIsContainer) {
-            if (-not (Test-Path -Path $target)) {
-                Write-Host "Creating symlink for directory $($item.FullName) -> $target"
-                New-Item -Path $target -ItemType SymbolicLink -Target $item.FullName -Force | Out-Null
-                Add-Content -Path $TRACKER_FILE -Value "$target\"
-            } elseif ((Test-Path -Path $target -PathType SymbolicLink) -and -not (Test-Path -Path $target -PathType Container)) {
-                Write-Host "Removing invalid symlink for directory $target"
-                Remove-Item -Path $target -Force
-                Write-Host "Creating symlink for directory $($item.FullName) -> $target"
-                New-Item -Path $target -ItemType SymbolicLink -Target $item.FullName -Force | Out-Null
-                Add-Content -Path $TRACKER_FILE -Value "$target\"
+        if ($_.PSIsContainer) {
+            if (-not (Test-Path $target)) {
+                Write-Output "Creating symlink for directory $($_.FullName) -> $target"
+                New-Item -ItemType SymbolicLink -Path $target -Target $_.FullName -Force | Out-Null
+                Add-Content -Path $trackerFile -Value ($target + "\")
+            } elseif (Is-Symlink $target -and -not (Test-Path $target -PathType Container)) {
+                Write-Output "Removing invalid symlink for directory: $target"
+                Trash-Item $target
+                Write-Output "Creating symlink for directory $($_.FullName) -> $target"
+                New-Item -ItemType SymbolicLink -Path $target -Target $_.FullName -Force | Out-Null
+                Add-Content -Path $trackerFile -Value ($target + "\")
             } else {
-                Link-DotfilesRecursive -src $item.FullName -dest $target
+                Link-DotfilesRecursive -src $_.FullName -dest $target
             }
         }
-    }
-
-    # Now process files in the current directory
-    Get-ChildItem -Path $src -Force -File -Exclude $IGNORE_LIST | ForEach-Object {
-        $item = $_
-        $target = Join-Path $dest $item.Name
-
-        if (Test-Path -Path $target -and -not (Test-Path -Path $target -PathType SymbolicLink)) {
-            Write-Host "Backing up existing file: $target"
-            Backup-File -file $target
-        }
-        if (-not (Test-Path -Path $target -PathType SymbolicLink)) {
-            Write-Host "Creating symlink for file $($item.FullName) -> $target"
-            New-Item -Path $target -ItemType SymbolicLink -Target $item.FullName -Force | Out-Null
-            Add-Content -Path $TRACKER_FILE -Value $target
+        else {
+            if (Test-Path $target -PathType Leaf -and -not (Is-Symlink $target)) {
+                Write-Output "Backing up existing file: $target"
+                Backup-File $target
+            }
+            if (-not (Is-Symlink $target)) {
+                Write-Output "Creating symlink for file $($_.FullName) -> $target"
+                if (Test-Path $target) { Remove-Item $target -Force }
+                New-Item -ItemType SymbolicLink -Path $target -Target $_.FullName -Force | Out-Null
+                Add-Content -Path $trackerFile -Value $target
+            }
         }
     }
 }
 
-# Function to link all dotfiles
+function Handle-SymlinkedItems {
+    if (Test-Path $trackerFile) {
+        Get-Content $trackerFile | ForEach-Object {
+            $item = $_.Trim()
+            $actualItem = $item.TrimEnd("\")
+            if ((Test-Path $actualItem -PathType Container) -and (Is-Symlink $actualItem)) { return }
+            if (Is-Symlink $actualItem -and -not (Test-Path $actualItem)) {
+                Write-Output "Removing broken symlink: $actualItem"
+                Trash-Item $actualItem
+            }
+        }
+    }
+}
+
 function Link-Dotfiles {
-    Write-Host "Linking dotfiles..."
-    # Ensure tracker file exists
-    if (-not (Test-Path -Path $TRACKER_FILE)) {
-        New-Item -Path $TRACKER_FILE -ItemType File | Out-Null
-    }
-
-    # Recursively link files from SCRIPT_DIR to user home
-    Link-DotfilesRecursive -src $SCRIPT_DIR -dest $userHome
-
-    # Optionally: call Handle-SymlinkedItems if desired (not implemented here)
+    Write-Output "Linking dotfiles..."
+    if (-not (Test-Path $trackerFile)) { New-Item -ItemType File -Path $trackerFile -Force | Out-Null }
+    Link-DotfilesRecursive -src $scriptDir -dest $HOME
+    Handle-SymlinkedItems
 }
 
-# Function to backup files while preserving directory structure
-function Backup-File {
-    param([string]$file)
-    $relativePath = (Split-Path -Path $file -Parent).Substring($userHome.Length)
-    $backupTarget = Join-Path $BACKUP_DIR $relativePath
+# -----------------------------
+# Dotfiles Unlinking Functions
+# -----------------------------
 
-    if (-not (Test-Path -Path $backupTarget)) {
-        New-Item -Path $backupTarget -ItemType Directory -Force | Out-Null
-    }
-    Move-Item -Path $file -Destination $backupTarget -Force
-}
-
-# Function to remove symlinks and restore backup files
 function Unlink-Dotfiles {
-    Write-Host "Unlinking dotfiles..."
-    $newTrackerFile = "$TRACKER_FILE.new"
-    New-Item -Path $newTrackerFile -ItemType File -Force | Out-Null
+    Write-Output "Unlinking dotfiles..."
+    $newTrackerFile = "$trackerFile.new"
+    New-Item -ItemType File -Path $newTrackerFile -Force | Out-Null
 
-    Get-Content $TRACKER_FILE | ForEach-Object {
+    Get-Content $trackerFile | ForEach-Object {
         $item = $_.Trim()
-        if (Test-Path -Path $item -PathType SymbolicLink) {
-            Write-Host "Removing symlink: $item"
-            Remove-Item -Path $item -Force
-        } else {
-            $backupFile = Join-Path $BACKUP_DIR ((Split-Path -Path $item -Parent).Substring($userHome.Length)) (Split-Path -Path $item -Leaf)
-            if (Test-Path -Path $backupFile) {
-                Write-Host "Restoring backup: $backupFile -> $item"
-                $destDir = Split-Path -Path $item -Parent
-                if (-not (Test-Path -Path $destDir)) {
-                    New-Item -Path $destDir -ItemType Directory -Force | Out-Null
-                }
-                Move-Item -Path $backupFile -Destination $item -Force
+        $actualItem = $item.TrimEnd("\")
+        if ((Test-Path $actualItem -PathType Container) -and (Is-Symlink $actualItem)) {
+            Write-Output "Removing symlink directory: $actualItem"
+            Trash-Item $actualItem
+        }
+        elseif (Is-Symlink $actualItem) {
+            Write-Output "Removing symlink: $actualItem"
+            Trash-Item $actualItem
+        }
+        else {
+            $relativePath = $actualItem.Substring($HOME.Length)
+            $backupFilePath = Join-Path $backupDir (Join-Path (Split-Path $relativePath -Parent) (Split-Path $actualItem -Leaf))
+            if (Test-Path $backupFilePath) {
+                Write-Output "Restoring backup: $backupFilePath -> $actualItem"
+                $destDir = Split-Path $actualItem -Parent
+                if (-not (Test-Path $destDir)) { New-Item -ItemType Directory -Path $destDir -Force | Out-Null }
+                Move-Item $backupFilePath -Destination $actualItem -Force
             }
         }
     }
 
-    Get-Content $TRACKER_FILE | ForEach-Object {
+    $newContent = @()
+    Get-Content $trackerFile | ForEach-Object {
         $item = $_.Trim()
-        if (Test-Path -Path $item) {
-            Add-Content -Path $newTrackerFile -Value $item
+        $actualItem = $item.TrimEnd("\")
+        if (Test-Path $actualItem -or (Is-Symlink $actualItem)) {
+            $newContent += $item
         }
     }
-    Move-Item -Path $newTrackerFile -Destination $TRACKER_FILE -Force
+    $newContent | Set-Content $trackerFile
 }
 
-# Function to clean untracked symlinks
-function Clean-Symlinks {
-    Write-Host "Cleaning untracked symlinks..."
-    $newTrackerFile = "$TRACKER_FILE.new"
-    New-Item -Path $newTrackerFile -ItemType File -Force | Out-Null
+function Unlink-DotfilesRecursive {
+    param([string]$dest)
+    Get-ChildItem -LiteralPath $dest -Force | ForEach-Object {
+        $actualItem = $_.FullName.TrimEnd("\")
+        if (Is-Symlink $actualItem -and $_.PSIsContainer) {
+            Write-Output "Removing symlink directory: $actualItem"
+            Trash-Item $actualItem
+        }
+        elseif (Is-Symlink $actualItem) {
+            Write-Output "Removing symlink: $actualItem"
+            Trash-Item $actualItem
+        }
+    }
+}
 
-    Get-Content $TRACKER_FILE | ForEach-Object {
-        $item = $_.Trim()
-        if (Test-Path -Path $item -PathType SymbolicLink) {
-            $dotfilePath = Join-Path $SCRIPT_DIR $item.Substring($userHome.Length)
-            if (-not (Test-Path -Path $dotfilePath)) {
-                Write-Host "Removing orphaned symlink: $item"
-                Remove-Item -Path $item -Force
-            } else {
+function Clean-Symlinks {
+    Write-Output "Cleaning untracked symlinks..."
+    if (Test-Path $trackerFile) {
+        $newTrackerFile = "$trackerFile.new"
+        New-Item -ItemType File -Path $newTrackerFile -Force | Out-Null
+        Get-Content $trackerFile | ForEach-Object {
+            $item = $_.Trim()
+            $actualItem = $item.TrimEnd("\")
+            if (Is-Symlink $actualItem) {
+                $dotfilePath = Join-Path $scriptDir ($actualItem.Substring($HOME.Length))
+                if (-not (Test-Path $dotfilePath)) {
+                    Write-Output "Removing orphaned symlink: $actualItem"
+                    Trash-Item $actualItem
+                }
+                else {
+                    Add-Content -Path $newTrackerFile -Value $item
+                }
+            }
+            else {
                 Add-Content -Path $newTrackerFile -Value $item
             }
-        } else {
-            Add-Content -Path $newTrackerFile -Value $item
         }
+        Move-Item -Path $newTrackerFile -Destination $trackerFile -Force
     }
-    Move-Item -Path $newTrackerFile -Destination $TRACKER_FILE -Force
 }
 
-# Function to reinstall dotfiles
 function Reinstall-Dotfiles {
-    Write-Host "Reinstalling dotfiles..."
+    Write-Output "Reinstalling dotfiles..."
     Unlink-Dotfiles
     Link-Dotfiles
 }
 
-# Main execution
-switch ($action) {
-    'enable' {
-        if (Test-Path -Path $ENABLED_FILE) {
-            Write-Host "Dotfiles are already enabled. Run 'reinstall' if new files have been added."
+# -----------------------------
+# Usage Function
+# -----------------------------
+function Show-Usage {
+    Write-Output "Usage: setup.ps1 {enable|disable|reinstall|clean} [config_file]"
+    exit 1
+}
+
+# -----------------------------
+# Main Script Execution
+# -----------------------------
+if ($args.Count -lt 1) {
+    Show-Usage
+}
+
+switch ($args[0].ToLower()) {
+    "enable" {
+        if (Test-Path $enabledFile) {
+            Write-Output "Dotfiles are already enabled. Run 'reinstall' if new files have been added."
             exit 1
-        } else {
-            if ($configFile) {
-                Link-DotfilesFromConfig -configFile $configFile
-            } else {
+        }
+        else {
+            if ($args.Count -ge 2) {
+                Link-DotfilesFromConfig $args[1]
+            }
+            else {
                 Link-Dotfiles
             }
-            New-Item -Path $ENABLED_FILE -ItemType File -Force | Out-Null
+            New-Item -ItemType File -Path $enabledFile -Force | Out-Null
         }
     }
-    'disable' {
-        if (Test-Path -Path $ENABLED_FILE) {
+    "disable" {
+        if (Test-Path $enabledFile) {
             Unlink-Dotfiles
-            Remove-Item -Path $ENABLED_FILE -Force
-        } else {
-            Write-Host "Dotfiles are already disabled. Run 'enable' to install."
+            Remove-Item $enabledFile -Force
+        }
+        else {
+            Write-Output "Dotfiles are already disabled. Run 'enable' to install."
             exit 1
         }
     }
-    'reinstall' {
-        if (Test-Path -Path $ENABLED_FILE) {
+    "reinstall" {
+        if (Test-Path $enabledFile) {
             Reinstall-Dotfiles
-        } else {
-            Write-Host "Dotfiles are not installed. Run 'enable' to install."
+        }
+        else {
+            Write-Output "Dotfiles are not installed. Run 'enable' to install."
             exit 1
         }
     }
-    'clean' {
-        if (Test-Path -Path $ENABLED_FILE) {
+    "clean" {
+        if (Test-Path $enabledFile) {
             Clean-Symlinks
-        } else {
-            Write-Host "Dotfiles are not installed. Run 'enable' to install."
+        }
+        else {
+            Write-Output "Dotfiles are not installed. Run 'enable' to install."
             exit 1
         }
     }
-    default {
-        Write-Host "Usage: setup.ps1 {enable|disable|reinstall|clean} [config_file]"
-        exit 1
+    Default {
+        Show-Usage
     }
 }
 
-Write-Host "Dotfiles $action completed."
+Write-Output "Dotfiles $($args[0]) completed."
