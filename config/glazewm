@@ -1,5 +1,5 @@
-.config/nvim/
+AppData/Local/nvim/
 .config/wezterm/
-.config/alacritty/
+AppData/Roaming/alacritty/
 .glzr/
 Documents/WindowsPowerShell/

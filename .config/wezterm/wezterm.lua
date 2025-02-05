@@ -6,7 +6,7 @@ local color_schemes = require 'colors'
 
 -- This will hold the configuration.
 local config = wezterm.config_builder()
-config.color_scheme = color_schemes["everforest"]
+config.color_scheme = "OneDark (base16)"
 -- config.win32_system_backdrop = 'Acrylic'
 -- This is where you actually apply your config choices
 
@@ -22,16 +22,16 @@ config.max_fps = 144
 config.default_cursor_style = "BlinkingBlock"
 config.cursor_blink_rate = 500
 config.cell_width = 0.9
-config.window_background_opacity = 0.9
+-- config.window_background_opacity = 0.9
 config.prefer_egl = true
 -- config.font_size = 18.0
 config.term = "xterm-256color" -- Set the terminal type
 
 config.window_padding = {
-	left = 0,
-	right = 0,
-	top = 0,
-	bottom = 0,
+	left = 6,
+	right = 6,
+	top = 4,
+	bottom = 4,
 }
 
 config.hide_tab_bar_if_only_one_tab = true
@@ -47,15 +47,15 @@ config.use_fancy_tab_bar = false
 --
 
 -- color scheme toggling
-wezterm.on("toggle-colorscheme", function(window, pane)
-	local overrides = window:get_config_overrides() or {}
-	if overrides.color_scheme == color_schemes["everforest"] then
-		overrides.color_scheme = color_schemes["catpuccin"]
-	else
-		overrides.color_scheme = color_schemes["everforest"]
-	end
-	window:set_config_overrides(overrides)
-end)
+-- wezterm.on("toggle-colorscheme", function(window, pane)
+-- 	local overrides = window:get_config_overrides() or {}
+-- 	if overrides.color_scheme == color_schemes["everforest"] then
+-- 		overrides.color_scheme = color_schemes["catpuccin"]
+-- 	else
+-- 		overrides.color_scheme = color_schemes["everforest"]
+-- 	end
+-- 	window:set_config_overrides(overrides)
+-- end)
 
 -- keymaps
 config.keys = {
