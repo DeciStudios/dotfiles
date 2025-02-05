@@ -13,7 +13,7 @@ config.color_scheme = color_schemes["everforest"]
 -- For example, changing the color scheme:
 config.font = wezterm.font "DroidSansM Nerd Font Mono"
 config.font_size = 11.0
-config.default_program = { "powershell.exe" }
+config.default_prog = { "powershell.exe" }
 config.front_end = "OpenGL"
 -- config.window_decorations = "INTEGRATED_BUTTONS | RESIZE"
 config.window_decorations = "NONE | RESIZE"
