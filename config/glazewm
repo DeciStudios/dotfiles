@@ -1,8 +1,5 @@
-.bashrc
-.zshrc
-.config/nvim
-.config/wezterm
-.config/alacritty
-.zsh
-.z
-.glzr
+.config/nvim/
+.config/wezterm/
+.config/alacritty/
+.glzr/
+Documents/PowerShell/
