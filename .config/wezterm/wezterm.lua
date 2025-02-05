@@ -11,7 +11,8 @@ config.color_scheme = "OneDark (base16)"
 -- This is where you actually apply your config choices
 
 -- For example, changing the color scheme:
-config.font = wezterm.font "DroidSansM Nerd Font Mono"
+-- config.font = wezterm.font "DroidSansM Nerd Font Mono"
+config.font = wezterm.font "MesloLGS Nerd Font"
 config.font_size = 11.0
 config.default_prog = { "powershell.exe" }
 config.front_end = "OpenGL"
@@ -60,12 +61,7 @@ config.use_fancy_tab_bar = false
 -- keymaps
 config.keys = {
 	{
-		key = "E",
-		mods = "CTRL|SHIFT|ALT",
-		action = wezterm.action.EmitEvent("toggle-colorscheme"),
-	},
-	{
-		key = "h",
+		key = "RightArrow",
 		mods = "CTRL|SHIFT|ALT",
 		action = wezterm.action.SplitPane({
 			direction = "Right",
@@ -73,7 +69,7 @@ config.keys = {
 		}),
 	},
 	{
-		key = "v",
+		key = "DownArrow",
 		mods = "CTRL|SHIFT|ALT",
 		action = wezterm.action.SplitPane({
 			direction = "Down",

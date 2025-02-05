@@ -11,6 +11,7 @@ local plugins = {
         "mypy",
         "ruff-lsp",
         "pyright",
+        "ols",
       },
     },
   },

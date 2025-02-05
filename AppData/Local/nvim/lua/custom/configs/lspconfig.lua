@@ -16,3 +16,9 @@ for _, lsp in ipairs(servers) do
     filetypes = {"python"},
   })
 end
+
+lspconfig.ols.setup({
+  on_attach = on_attach,
+  capabilities = capabilities,
+  filetypes = { "odin" },  -- adjust this to the filetypes that OLS should handle
+})
