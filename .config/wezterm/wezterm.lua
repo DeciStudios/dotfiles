@@ -12,8 +12,8 @@ config.color_scheme = "OneDark (base16)"
 
 -- For example, changing the color scheme:
 -- config.font = wezterm.font "DroidSansM Nerd Font Mono"
-config.font = wezterm.font "MesloLGS Nerd Font"
-config.font_size = 11.0
+config.font = wezterm.font("FiraCode Nerd Font", {weight="Bold"})
+config.font_size = 13.0
 config.default_prog = { "powershell.exe" }
 config.front_end = "OpenGL"
 -- config.window_decorations = "INTEGRATED_BUTTONS | RESIZE"

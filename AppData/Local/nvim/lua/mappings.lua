@@ -52,8 +52,29 @@ M.copilot = {
         require("copilot").toggle()
       end,
       "toggle copilot"
+    },
+    ["<leader>gi"] = {
+      function ()
+        require("CopilotChat").open({
+          window = {
+            layout = 'float',
+            relative = 'cursor',
+            width = 1,
+            height = 0.4,
+            row = 1,
+          }
+        })
+      end,
+      "open copilot chat inline"
     }
   }
 }
 
-return M
+local map = vim.keymap.set
+for name, maps in pairs(M) do
+  for mode, data in pairs(maps) do
+    for key,val in pairs(data) do
+      map(mode, key, val[1], { desc=val[2] })
+    end
+  end
+end

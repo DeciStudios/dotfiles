@@ -1,3 +1,12 @@
+# Suppress update notifications
+$env:POWERSHELL_UPDATECHECK = "Off"
+$env:__PSLockdownPolicy = 1  # This may help suppress some startup messages
+# Remove profile load time message
+$Global:PROFILE_STOPWATCH = $null
+
+# Clear the copyright and welcome message
+Clear-Host
+
 Set-PSReadLineOption -PredictionSource History
 
 Set-PSReadLineOption -PredictionViewStyle ListView
@@ -56,3 +65,6 @@ function ll()
 
 
 fnm env --use-on-cd --shell powershell | Out-String | Invoke-Expression
+
+
+Set-Alias neofetch fastfetch

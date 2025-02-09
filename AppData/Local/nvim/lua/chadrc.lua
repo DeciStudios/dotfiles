@@ -11,16 +11,20 @@ M.ui = {
     theme = "minimal",
     separator_style = "round",
   },
-  nvdash = {
-    load_on_startup = true,
-  },
+
+}
+M.nvdash = {
+  load_on_startup=true
 }
 M.plugins = "custom.plugins"
-M.mappings = require "custom.mappings"
+require "custom.mappings"
+
 
 if vim.g.neovide then
   --print("YEAH")
-  vim.g.neovide_font_size = 12
+  vim.o.guifont= "FiraCode Nerd Font:h13:b"
+  --vim.g.neovide_font_size = 12
+  --vim.g.neovide
   M.ui.transparency  = false
 end
 vim.g.nvchad_theme = M.ui.theme
