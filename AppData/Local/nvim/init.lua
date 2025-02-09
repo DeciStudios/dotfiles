@@ -33,7 +33,7 @@ require "options"
 require "nvchad.autocmds"
 
 vim.schedule(function()
-  require "lua.mappings"
+  require "mappings"
 end)
 
 

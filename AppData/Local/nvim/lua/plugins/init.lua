@@ -19,8 +19,8 @@ local plugins = {
   {
     "neovim/nvim-lspconfig",
     config = function()
-      require "plugins.configs.lspconfig"
-      require "custom.configs.lspconfig"
+      -- require "plugins.configs.lspconfig"
+      require "configs.lspconfig"
     end,
   },
   {
@@ -29,13 +29,13 @@ local plugins = {
     ft = { "rust" },
     dependencies = "neovim/nvim-lspconfig",
     config = function()
-      require "custom.configs.rustaceanvim"
+      require "configs.rustaceanvim"
     end
   },
   {
     "mfussenegger/nvim-dap",
     init = function()
-      require("core.utils").load_mappings("dap")
+      -- require("core.utils").load_mappings("dap")
     end
   },
   {
@@ -65,29 +65,14 @@ local plugins = {
       require("nvim-dap-virtual-text").setup()
     end
   },
+
   {
     "hrsh7th/nvim-cmp",
     dependencies = {
       "zbirenbaum/copilot-cmp",
     },
     opts = function()
-      local cmp = require "cmp"
-      local M = require "plugins.configs.cmp"
-      M.completion.completeopt = "menu,menuone,noselect"
-      M.mapping["<CR>"] = cmp.mapping.confirm {
-        behavior = cmp.ConfirmBehavior.Insert,
-        select = false,
-      }
-      M.sources = {
-        {name="crates",group_index = 2},
-        { name = "nvim_lsp", group_index = 2 },
-        { name = "copilot",  group_index = 2 },
-        { name = "luasnip",  group_index = 2 },
-        { name = "buffer",   group_index = 2 },
-        { name = "nvim_lua", group_index = 2 },
-        { name = "path",     group_index = 2 },
-      }
-      return M
+      return require "configs.cmp"
     end,
   },
   -- {
@@ -125,7 +110,7 @@ local plugins = {
       { "nvim-lua/plenary.nvim" }, -- for curl, log wrapper
     },
     config = function()
-      require("CopilotChat").setup(require("custom.configs.copilot"))
+      require("CopilotChat").setup(require("configs/copilot"))
     end
     -- See Commands section for default commands if you want to lazy load on them
   },
@@ -161,14 +146,14 @@ local plugins = {
     config = function(_, opts)
       local path = "~/.local/share/nvim/mason/packages/debugpy/venv/bin/python"
       require("dap-python").setup(path)
-      require("core.utils").load_mappings("dap_python")
+      -- require("core.utils").load_mappings("dap_python")
     end,
   },
   {
     "nvimtools/none-ls.nvim",
     ft = {"python"},
     opts = function()
-      return require "custom.configs.null-ls"
+      return require "configs.null-ls"
     end,
   },
 
@@ -180,6 +165,66 @@ local plugins = {
       require("copilot_cmp").setup({})
     end
   },
+
+  {
+    "nvim-telescope/telescope-file-browser.nvim",
+    dependencies = { "nvim-telescope/telescope.nvim", "nvim-lua/plenary.nvim" },
+    init = function()
+      require("telescope").load_extension("file_browser")
+    end,
+    config = function()
+      local fb_actions = require "telescope".extensions.file_browser.actions
+      local actions = require "telescope.actions"
+      local actions_state = require("telescope.actions.state")
+
+      require("telescope").setup({
+        extensions = {
+          file_browser = {
+            theme = "ivy",
+            -- disables netrw and use telescope-file-browser in its place
+            hijack_netrw = true,
+            mappings = {
+              ["i"] = {
+                -- your custom insert mode mappings
+                ["<C-e>"] = function(prompt_bufnr) -- Ctrl+Enter in most cases
+                  local picker = actions_state.get_current_picker(prompt_bufnr)
+                  if not picker then return end
+
+                  fb_actions.change_cwd(prompt_bufnr)
+                  actions.close(prompt_bufnr)
+                end
+              },
+              ["n"] = {
+                -- your custom normal mode mappings
+                ["<Space>"] = function(prompt_bufnr)
+                  local picker = actions_state.get_current_picker(prompt_bufnr)
+                  if not picker then return end -- Prevent errors if there's no active picker
+
+                  fb_actions.change_cwd(prompt_bufnr)
+                  actions.close(prompt_bufnr)
+                end
+              },
+            },
+          },
+        },
+      })
+    end
+  },
+  --[[{ 
+    "DeciStudios/mpv.nvim", 
+    config=function()
+      require("mpv").setup({
+          width = 50,
+          height = 5,              -- Changing these two might break the UI 😬
+          border = 'single',
+          setup_widgets = false,   -- to activate the widget components
+          timer = {
+              after = 1000,
+              throttle = 250,      -- Update time for the widgets. (lesser the faster)
+          }
+      })
+    end 
+  }]]
 
 
 

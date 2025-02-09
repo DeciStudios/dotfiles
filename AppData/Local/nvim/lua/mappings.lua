@@ -1,7 +1,7 @@
+require "nvchad.mappings"
 local M = {}
 
 M.dap = {
-  plugin = true,
   n = {
     ["<leader>db"] = { "<cmd> DapToggleBreakpoint <CR>" },
     ["<leader>dus"] = {
@@ -16,7 +16,6 @@ M.dap = {
 }
 
 M.crates = {
-  plugin = true,
   n = {
     ["<leader>rcu"] = {
       function ()
@@ -28,7 +27,6 @@ M.crates = {
 }
 
 M.dap_python = {
-  plugin = true,
   n = {
     ["<leader>dpr"] = {
       function()
@@ -39,7 +37,6 @@ M.dap_python = {
 }
 
 M.copilot = {
-  plugin = true,
   n = {
     ["<leader>gc"] = {
       function()
@@ -70,10 +67,40 @@ M.copilot = {
   }
 }
 
+M.telescope_dir = {
+  n = {
+    ["cd"] = {
+      function ()
+        require("telescope").extensions.file_browser.file_browser()
+      end,
+      "open file in default app"
+    },
+    ["<leader>cd"] = {
+      function ()
+        require("telescope").extensions.file_browser.file_browser()
+      end,
+      "open file in default app"
+    }
+  }
+}
+
+--[[M.mpv = {
+  n = {
+    ["<leader>mv"] = {
+      function ()
+        require("mpv").toggle_player()
+      end,
+      "play video"
+    }
+  }
+}]]
+
+
 local map = vim.keymap.set
 for name, maps in pairs(M) do
   for mode, data in pairs(maps) do
     for key,val in pairs(data) do
+
       map(mode, key, val[1], { desc=val[2] })
     end
   end

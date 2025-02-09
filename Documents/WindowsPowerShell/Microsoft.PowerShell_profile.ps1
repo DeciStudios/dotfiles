@@ -68,3 +68,8 @@ fnm env --use-on-cd --shell powershell | Out-String | Invoke-Expression
 
 
 Set-Alias neofetch fastfetch
+Set-Alias touch New-Item
+
+$LOCALAPPDATA = "$HOME\AppData\Local"
+$APPDATA = "$HOME\AppData\Roaming"
+$USERPROFILE = "$HOME"

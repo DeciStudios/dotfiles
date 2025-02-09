@@ -1,3 +1,4 @@
+require("nvchad.configs.lspconfig").defaults()
 local nvlsp = require "nvchad.configs.lspconfig"
 local on_attach = nvlsp.on_attach
 local capabilities = nvlsp.capabilities
