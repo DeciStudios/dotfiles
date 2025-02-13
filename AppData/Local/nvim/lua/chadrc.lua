@@ -3,7 +3,7 @@ local M = {}
 
 
 M.base46 = {
-  theme="catppuccin"
+  theme="aylin"
 }
 
 M.ui = {
@@ -59,6 +59,8 @@ M.nvdash = {
 if vim.g.neovide then
   --print("YEAH")
   vim.o.guifont= "FiraCode Nerd Font:h13:b"
+  local default_path = vim.fn.expand("~/Documents/Projects")
+  vim.api.nvim_set_current_dir(default_path)
   --vim.g.neovide_font_size = 12
   --vim.g.neovide
   -- vim.g.neovide_transparency = 0.8
