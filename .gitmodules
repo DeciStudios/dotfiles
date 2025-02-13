@@ -1,0 +1,3 @@
+[submodule "AppData/local/nvim"]
+	path = AppData/local/nvim
+	url = https://github.com/DeciStudios/nvim-config.git
