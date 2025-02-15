@@ -6,3 +6,4 @@
 .config/hypr
 .config/kitty
 .config/waybar
+.config/wofi

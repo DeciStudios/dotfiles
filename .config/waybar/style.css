@@ -2,26 +2,37 @@
     /* `otf-font-awesome` is required to be installed for icons */
     
     font-family: "FiraCode Nerd Font Regular", sans-serif;
-    color: @primary-color;
+    /*color: @primary-color;*/
     font-size: 13px;
 
 }
 
-@define-color primary-color rgb(144, 255, 0);
+@define-color primary-color rgb(69,238,105);
+@define-color primary-gradient rgba(45, 238, 105, 0.93);
+@define-color secondary-gradient rgba(0, 255, 153, 0.93);
+
+
 @define-color unfocused-color rgb(61, 61, 61);
 @define-color focused-inactive-color rgb(61, 61, 61);
-@define-color bg-color rgb(39, 39, 39);
+@define-color bg-color rgba(29, 38, 47,1.0);
 @define-color urgent-color rgb(239, 68, 68);
 @define-color cpu-color rgb(30, 144, 255);
 @define-color memory-color rgb(30, 144, 255);
 
 
 window#waybar {
-    background-color: @bg-color;
-    border-bottom: 1px solid @primary-color;
+    /*background-color: @bg-color;*/
+    
+    border: double 2px transparent;
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+    background-image: linear-gradient(@bg-color,@bg-color), linear-gradient(45deg, @primary-gradient, @secondary-gradient);
+    border-radius: 10px; /* Apply border-radius */
     color: #ffffff;
+
     transition-property: background-color;
     transition-duration: .5s;
+    
 }
 
 window#waybar.hidden {
@@ -47,11 +58,11 @@ window#waybar.chromium {
 }
 
 #custom-volume-up, #custom-volume-down {
-  background-color: @bg-color;
+  background-color: transparent;
   color: @primary-color;
-  border-radius: 10px;
+  border-radius: 7px;
   padding: 0 5px;
-  margin: 4px 0px;
+  margin: 5px 4px;
 }
 
 #custom-volume-up:hover, #custom-volume-down:hover {
@@ -75,21 +86,17 @@ button:hover {
 
 #workspaces button {
     padding: 0 5px;
-    margin: 4px 0px;
-    background-color: @bg-color;
-    border-radius: 10px;
+    margin: 5px 4px;
+    background-color: transparent;
+    border-radius: 7px;
     color: @primary-color;
 }
 
-#workspaces button:hover {
-    background-color: @primary-color;
-    color: @bg-color;
+#workspaces button:hover, #workspaces button.active{
+  background-color: @primary-color;
+  color: @bg-color;
 }
 
-#workspaces button.focused {
-    background-color: @primary-color;
-    color: @bg-color;
-}
 
 #workspaces button.urgent {
     background-color: @urgent-color;
@@ -115,6 +122,9 @@ button:hover {
 #power-profiles-daemon,
 #custom-volume-up,
 #custom-volume-down,
+#custom-volume,
+#custom-weather,
+#custom-seperator,
 #mpd {
     padding: 0 5px;
     color: @primary-color;
@@ -182,7 +192,7 @@ label:focus {
 
 #tray > .needs-attention {
     -gtk-icon-effect: highlight;
-    background-color: #eb4d4b;
+    background-color: @urgent-color;
 }
 
 

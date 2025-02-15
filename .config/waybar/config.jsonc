@@ -2,9 +2,13 @@
 {
     // "layer": "top", // Waybar at top layer
     // "position": "bottom", // Waybar position (top|bottom|left|right)
-    "height": 30, // Waybar height (to be removed for auto height)
+    "height": 32, // Waybar height (to be removed for auto height)
     // "width": 1280, // Waybar width
     "spacing": 4, // Gaps between modules (4px)
+    "margin-left": 10,
+  "margin-right": 10,
+  "margin-top": 10,
+    // Margin around Waybar (0px)
     // Choose the order of the modules
     "modules-left": [
       "hyprland/workspaces" 
@@ -42,7 +46,7 @@
     //     }
     // },
     "hyprland/workspaces": {
-      "format": "<b>{icon}</b>",
+      "format": "<b>{icon}</b>  ",
       "on-scroll-up": "hyprctl dispatch workspace e+1",
       "on-scroll-down": "hyprctl dispatch workspace e-1"
     },
@@ -75,7 +79,7 @@
 },
 
 "custom/seperator": {
-    "format": " | "
+    "format": "|"
 },
 
 "custom/volume-down": {
@@ -95,7 +99,7 @@
         "tooltip": false
     },
     "memory": {
-        "format": "   {}%"
+        "format": "   {}%  "
     },
 
 
