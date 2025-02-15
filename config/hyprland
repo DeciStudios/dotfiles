@@ -4,3 +4,5 @@
 .z
 .zsh_history
 .config/hypr
+.config/kitty
+.config/waybar

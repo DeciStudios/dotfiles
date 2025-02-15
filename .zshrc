@@ -24,13 +24,14 @@ plugins=(
 
 # Source Oh My Zsh
 source "$ZSH/oh-my-zsh.sh"
-
+. ~/.zsh/z/z.sh
 # Linux-specific configuration
-source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-
-
-
+source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+fpath+=($HOME/.zsh/pure)
+autoload -U promptinit; promptinit
+prompt pure
 # Environment setup
 export PATH="$HOME/.local/bin:$HOME/.fnm:$PATH"
+alias vi="nvim"
 eval "$(fnm env)"
 

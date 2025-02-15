@@ -1,0 +1,135 @@
+// -*- mode: jsonc -*-
+{
+    // "layer": "top", // Waybar at top layer
+    // "position": "bottom", // Waybar position (top|bottom|left|right)
+    "height": 30, // Waybar height (to be removed for auto height)
+    // "width": 1280, // Waybar width
+    "spacing": 4, // Gaps between modules (4px)
+    // Choose the order of the modules
+    "modules-left": [
+      "hyprland/workspaces" 
+    ],
+    "modules-center": [
+        "custom/weather",
+        "custom/seperator",
+        "clock"
+    ],
+    "modules-right": [
+        "tray",
+        "custom/seperator",
+        "custom/volume-up",
+        "custom/volume",
+        "custom/volume-down",
+        "custom/seperator",
+        "cpu",
+        "memory"
+    ],
+    // Modules configuration
+    // "sway/workspaces": {
+    //     "disable-scroll": true,
+    //     "all-outputs": true,
+    //     "warp-on-scroll": false,
+    //     "format": "{name}: {icon}",
+    //     "format-icons": {
+    //         "1": "",
+    //         "2": "",
+    //         "3": "",
+    //         "4": "",
+    //         "5": "",
+    //         "urgent": "",
+    //         "focused": "",
+    //         "default": ""
+    //     }
+    // },
+    "hyprland/workspaces": {
+      "format": "<b>{icon}</b>",
+      "on-scroll-up": "hyprctl dispatch workspace e+1",
+      "on-scroll-down": "hyprctl dispatch workspace e-1"
+    },
+    "hyprland/window": {
+        "separate-outputs": true
+    },
+
+    "tray": {
+        // "icon-size": 21,
+        "spacing": 10
+    },
+    
+"custom/volume-up": {
+    "format": "<big>󰝝</big>",
+    "on-click": "pactl set-sink-volume @DEFAULT_SINK@ +5%"
+},
+
+"custom/weather": {
+    "format": "{}",
+    "exec": "~/.config/waybar/weather.sh",
+    "interval": 600
+},
+
+"custom/volume": {
+    "format": " {}% ",
+    "on-click": "pavucontrol",
+    "exec": "pamixer --get-volume | cut -d ' ' -f 1",
+    "exec-if": "pamixer --get-volume",
+    "interval": 1
+},
+
+"custom/seperator": {
+    "format": " | "
+},
+
+"custom/volume-down": {
+    "format": "<big>󰝞</big>",
+    "on-click": "pactl set-sink-volume @DEFAULT_SINK@ -5%"
+},
+
+    "clock": {
+        "format": "{:%I:%M %p  <b>%a %d %b</b>}",
+        "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>",
+        "format-alt": "{:%Y-%m-%d}"
+    },
+
+
+    "cpu": {
+        "format": "   {usage}%",
+        "tooltip": false
+    },
+    "memory": {
+        "format": "   {}%"
+    },
+
+
+
+
+    "pulseaudio": {
+        // "scroll-step": 1, // %, can be a float
+        "format": "{volume}% {icon} {format_source}",
+        "format-bluetooth": "{volume}% {icon} {format_source}",
+        "format-bluetooth-muted": " {icon} {format_source}",
+        "format-muted": " {format_source}",
+        "format-source": "{volume}% ",
+        "format-source-muted": "",
+        "format-icons": {
+            "headphone": "",
+            "hands-free": "",
+            "headset": "",
+            "phone": "",
+            "portable": "",
+            "car": "",
+            "default": ["", "", ""]
+        },
+        "on-click": "pavucontrol"
+    },
+    "custom/power": {
+        "format" : "⏻ ",
+		    "tooltip": false,
+		    "menu": "on-click",
+		    "menu-file": "$HOME/.config/waybar/power_menu.xml", // Menu file in resources folder
+		    "menu-actions": {
+			      "shutdown": "shutdown",
+			      "reboot": "reboot",
+			      "suspend": "systemctl suspend",
+			      "hibernate": "systemctl hibernate"
+		    }
+    }
+}
