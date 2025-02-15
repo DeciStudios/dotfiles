@@ -5,7 +5,7 @@
 # Variables
 _action=send
 _listing=false
-_menu_cmd="rofi -dmenu -i -p scratchpad"
+_menu_cmd="wofi --dmenu -i -p scratchpad"
 green="\033[0;32m"
 red="\033[0;31m"
 blue="\033[0;34m"

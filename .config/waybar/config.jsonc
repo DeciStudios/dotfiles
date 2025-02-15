@@ -72,7 +72,7 @@
 
 "custom/volume": {
     "format": " {}% ",
-    "on-click": "pavucontrol",
+    "on-click": "audiomanager",
     "exec": "pamixer --get-volume | cut -d ' ' -f 1",
     "exec-if": "pamixer --get-volume",
     "interval": 1

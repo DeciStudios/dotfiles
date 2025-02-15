@@ -1,0 +1,194 @@
+#!/usr/bin/env python3
+import curses
+import subprocess
+import sys
+
+class PipewireController:
+    def __init__(self):
+        self.sinks = []
+        self.update_sinks()
+        self.current_sink = self.find_default_sink_index()
+        self.volume = self.get_current_volume()
+        self.focus = 0  # 0 = output device, 1 = volume
+    
+
+    def find_default_sink_index(self): 
+        try:
+            default_sink = subprocess.check_output(["pactl", "get-default-sink"]).decode().strip()
+            output = subprocess.check_output(["pactl", "list", "sinks"]).decode()
+            current_name = None
+            is_default = False
+        
+            for line in output.split('\n'):
+                if line.strip().startswith("Sink #"):
+                    current_name = line.strip()[6:]
+                    is_default = False
+                elif "Name:" in line and default_sink in line:
+                    is_default = True
+            
+            # If we found the default sink, look for it in our list
+                if is_default and current_name:
+                    for i, (sink_name, _) in enumerate(self.sinks):
+                        if sink_name == current_name:
+                            return i
+        
+            return 0  # Fall back to first sink if not found
+        except Exception as e:
+            print(f"Error finding default sink: {str(e)}")
+            return 0  # Fall back to first sink on error 
+
+
+
+    def update_sinks(self):
+        """Get list of output devices using pactl"""
+        try:
+            output = subprocess.check_output(["pactl", "list", "sinks"]).decode()
+            self.sinks = []
+            sink_name = None
+            sink_description = None
+            
+            for line in output.split('\n'):
+                if line.strip().startswith("Sink #"):
+                    sink_name = line.strip()[6:]
+                elif line.strip().startswith("Description:"):
+                    sink_description = line.strip()[13:].strip('"')
+                    if sink_name is not None and sink_description is not None:
+                        self.sinks.append((sink_name, sink_description))
+                        sink_name = None
+                        sink_description = None
+                        
+            if not self.sinks:
+                self.sinks = [("dummy", "No sinks found")]
+        except Exception as e:
+            self.sinks = [("error", f"Error: {str(e)}")]
+
+    def get_current_volume(self):
+        """Get volume of current sink"""
+        try:
+            if not self.sinks:
+                return 0
+                
+            sink_name = self.sinks[self.current_sink][0]
+            output = subprocess.check_output(["pactl", "list", "sinks"]).decode()
+            
+            in_current_sink = False
+            for line in output.split('\n'):
+                if line.strip().startswith("Sink #") and line.strip()[6:] == sink_name:
+                    in_current_sink = True
+                elif in_current_sink and "Volume:" in line and "%" in line:
+                    # Extract the first percentage value
+                    parts = line.split('%')
+                    vol_part = parts[0]
+                    vol_digits = ''.join(filter(str.isdigit, vol_part[-3:]))
+                    if vol_digits:
+                        return int(vol_digits)
+            return 50  # default
+        except:
+            return 50  # default on error
+
+    def set_volume(self, volume):
+        """Set volume for current sink"""
+        if not self.sinks:
+            return
+            
+        if volume < 0:
+            volume = 0
+        if volume > 100:
+            volume = 100
+            
+        self.volume = volume
+        sink_name = self.sinks[self.current_sink][0]
+        try:
+            subprocess.run(["pactl", "set-sink-volume", sink_name, f"{volume}%"])
+        except:
+            pass  # Ignore errors
+
+    def set_default_sink(self):
+        """Set current sink as default"""
+        if not self.sinks:
+            return
+            
+        sink_name = self.sinks[self.current_sink][0]
+        try:
+            subprocess.run(["pactl", "set-default-sink", sink_name])
+        except:
+            pass  # Ignore errors
+
+def draw_interface(stdscr, controller):
+    stdscr.clear()
+    h, w = stdscr.getmaxyx()
+    
+    # Update volume from system
+    controller.volume = controller.get_current_volume()
+    
+    # Draw title
+    title = "Pipewire Controller"
+    stdscr.addstr(0, (w - len(title)) // 2, title, curses.A_BOLD)
+    
+    # Draw device selection
+    if controller.sinks:
+        device_name = controller.sinks[controller.current_sink][1]
+        if len(device_name) > w - 4:
+            device_name = device_name[:w-7] + "..."
+    else:
+        device_name = "No devices"
+
+    device_text = f"< {device_name} >"
+    if controller.focus == 0:
+        stdscr.addstr(2, (w - len(device_text)) // 2, device_text, curses.A_REVERSE)
+    else:
+        stdscr.addstr(2, (w - len(device_text)) // 2, device_text)
+    
+    stdscr.addstr(2, w - 7, "VOL")
+    
+    # Draw volume
+    volume_bar_width = w - 20
+    filled = int(volume_bar_width * controller.volume / 100)
+    empty = volume_bar_width - filled
+    
+    if controller.focus == 1:
+        vol_str = f"< {'=' * filled}{'-' * empty} >"
+        stdscr.addstr(3, 2, "OUTPUT DEVICE")
+        stdscr.addstr(3, w - 7 - len(vol_str), vol_str, curses.A_REVERSE)
+    else:
+        vol_str = f"  {'=' * filled}{'-' * empty}  "
+        stdscr.addstr(3, 2, "OUTPUT DEVICE")
+        stdscr.addstr(3, w - 7 - len(vol_str), vol_str)
+    
+    # Draw help
+    stdscr.addstr(h-2, 2, "← → : Navigate  ↑ ↓ : Switch focus  q/Enter : Exit")
+    
+    stdscr.refresh()
+
+def main(stdscr):
+    # Setup
+    curses.curs_set(0)  # Hide cursor
+    stdscr.timeout(100)  # Non-blocking getch
+    controller = PipewireController()
+    
+    while True:
+        draw_interface(stdscr, controller)
+        key = stdscr.getch()
+        
+        if key == ord('q') or key == 10:  # q or Enter
+            break
+        elif key == curses.KEY_UP or key == curses.KEY_DOWN:
+            controller.focus = 1 - controller.focus  # Toggle focus
+        elif key == curses.KEY_LEFT:
+            if controller.focus == 0 and controller.sinks:  # Device focus
+                controller.current_sink = (controller.current_sink - 1) % len(controller.sinks)
+                controller.set_default_sink()
+            elif controller.focus == 1:  # Volume focus
+                controller.set_volume(controller.volume - 5)
+        elif key == curses.KEY_RIGHT:
+            if controller.focus == 0 and controller.sinks:  # Device focus
+                controller.current_sink = (controller.current_sink + 1) % len(controller.sinks)
+                controller.set_default_sink()
+            elif controller.focus == 1:  # Volume focus
+                controller.set_volume(controller.volume + 5)
+
+if __name__ == "__main__":
+    try:
+        curses.wrapper(main)
+    except KeyboardInterrupt:
+        sys.exit(0)

@@ -7,3 +7,4 @@
 .config/kitty
 .config/waybar
 .config/wofi
+.local/bin/pipevolmix
