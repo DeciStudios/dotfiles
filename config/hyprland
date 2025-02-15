@@ -7,4 +7,6 @@
 .config/kitty
 .config/waybar
 .config/wofi
+.config/yazi
 .local/bin/pipevolmix
+.local/bin/pipevolmix-launch

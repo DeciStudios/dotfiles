@@ -1,0 +1,4 @@
+[[open.rules]]
+mime = "image/*"
+use = "imv \"$1\""
+
