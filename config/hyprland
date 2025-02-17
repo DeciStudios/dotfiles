@@ -10,3 +10,4 @@
 .config/yazi
 .local/bin/pipevolmix
 .local/bin/pipevolmix-launch
+.local/bin/gtkthemer

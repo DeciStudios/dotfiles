@@ -19,12 +19,11 @@ plugins=(
   colorize
   cp
   # Remove z from here if using an external z.sh OR remove external source instead
-  z
+  zsh-z
 )
 
 # Source Oh My Zsh
 source "$ZSH/oh-my-zsh.sh"
-. ~/.zsh/z/z.sh
 # Linux-specific configuration
 source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 fpath+=($HOME/.zsh/pure)
@@ -33,5 +32,7 @@ prompt pure
 # Environment setup
 export PATH="$HOME/.local/bin:$HOME/.fnm:$PATH"
 alias vi="nvim"
-eval "$(fnm env)"
+alias yay="paru"
 
+eval "$(fnm env)"
+eval "$(EMSDK_QUIET=1 /usr/lib/emsdk/emsdk_env.sh)"

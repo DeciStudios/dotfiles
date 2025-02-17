@@ -1,24 +1,13 @@
 * {
     /* `otf-font-awesome` is required to be installed for icons */
     
-    font-family: "FiraCode Nerd Font Regular", sans-serif;
+    /*font-family: "FiraCode Nerd Font Regular", sans-serif;*/
+    font-family: "Noto Sans Nerd Font";
     /*color: @primary-color;*/
     font-size: 13px;
 
 }
-
-@define-color primary-color rgb(69,238,105);
-@define-color primary-gradient rgba(45, 238, 105, 0.93);
-@define-color secondary-gradient rgba(0, 255, 153, 0.93);
-
-
-@define-color unfocused-color rgb(61, 61, 61);
-@define-color focused-inactive-color rgb(61, 61, 61);
-@define-color bg-color rgba(29, 38, 47,1.0);
-@define-color urgent-color rgb(239, 68, 68);
-@define-color cpu-color rgb(30, 144, 255);
-@define-color memory-color rgb(30, 144, 255);
-
+@import url("colors.css");
 
 window#waybar {
     /*background-color: @bg-color;*/
@@ -26,7 +15,7 @@ window#waybar {
     border: double 2px transparent;
     background-origin: border-box;
     background-clip: padding-box, border-box;
-    background-image: linear-gradient(@bg-color,@bg-color), linear-gradient(45deg, @primary-gradient, @secondary-gradient);
+    background-image: linear-gradient(@bg-color,@bg-color), linear-gradient(45deg, @primary-color, @secondary-gradient);
     border-radius: 10px; /* Apply border-radius */
     color: #ffffff;
 
@@ -100,6 +89,7 @@ button:hover {
 
 #workspaces button.urgent {
     background-color: @urgent-color;
+    color: @bg-color;
 }
 
 
@@ -165,11 +155,11 @@ label:focus {
 }
 
 #cpu {
-    color: @cpu-color;
+    color: @resources-color;
 }
 
 #memory {
-    color: @memory-color;
+    color: @resources-color;
 }
 
 #disk {

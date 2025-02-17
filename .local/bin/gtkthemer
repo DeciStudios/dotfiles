@@ -1,0 +1,121 @@
+#!/usr/bin/env python3
+
+import os
+import curses
+import configparser
+from pathlib import Path
+from typing import List, Set
+
+def get_theme_paths() -> List[Path]:
+    """Get all possible theme directories."""
+    paths = [
+        Path.home() / '.themes',
+        Path('/usr/share/themes')
+    ]
+    return [p for p in paths if p.exists()]
+
+def find_themes() -> Set[str]:
+    """Find all available GTK themes."""
+    themes = set()
+    
+    for theme_dir in get_theme_paths():
+        for item in theme_dir.iterdir():
+            if item.is_dir():
+                # Check if directory contains GTK theme files
+                if any((item / 'gtk-3.0').glob('*.css')) or \
+                   any((item / 'gtk-4.0').glob('*.css')):
+                    themes.add(item.name)
+    
+    return sorted(themes)
+
+def update_gtk_settings(theme_name: str):
+    """Update GTK settings to use the selected theme."""
+    config_dirs = [
+        Path.home() / '.config/gtk-3.0/settings.ini',
+        Path.home() / '.config/gtk-4.0/settings.ini'
+    ]
+    
+    for config_file in config_dirs:
+        config_file.parent.mkdir(parents=True, exist_ok=True)
+        
+        config = configparser.ConfigParser()
+        if config_file.exists():
+            config.read(config_file)
+            
+        if not config.has_section('Settings'):
+            config.add_section('Settings')
+            
+        config['Settings']['gtk-theme-name'] = theme_name
+        
+        with open(config_file, 'w') as f:
+            config.write(f)
+
+def theme_selector(stdscr, themes: List[str]) -> str:
+    """Create an ncurses interface to select a theme."""
+    curses.curs_set(0)  # Hide cursor
+    current_row = 0
+    
+    # Color setup
+    curses.start_color()
+    curses.init_pair(1, curses.COLOR_BLACK, curses.COLOR_WHITE)
+    
+    while True:
+        stdscr.clear()
+        height, width = stdscr.getmaxyx()
+        
+        # Calculate window parameters
+        visible_themes = height - 2
+        start_idx = max(0, current_row - visible_themes + 1)
+        
+        # Display header
+        header = "GTK Theme Selector (Use ↑↓, Enter to select, q to quit)"
+        stdscr.addstr(0, 0, header.center(width), curses.A_BOLD)
+        
+        # Display themes
+        for idx, theme in enumerate(themes[start_idx:start_idx + visible_themes]):
+            y = idx + 1
+            if y >= height:
+                break
+                
+            if idx + start_idx == current_row:
+                stdscr.attron(curses.color_pair(1))
+                stdscr.addstr(y, 0, theme.center(width))
+                stdscr.attroff(curses.color_pair(1))
+            else:
+                stdscr.addstr(y, 0, theme.center(width))
+        
+        stdscr.refresh()
+        
+        # Handle key input
+        key = stdscr.getch()
+        if key == curses.KEY_UP and current_row > 0:
+            current_row -= 1
+        elif key == curses.KEY_DOWN and current_row < len(themes) - 1:
+            current_row += 1
+        elif key == ord('\n'):  # Enter key
+            return themes[current_row]
+        elif key == ord('q'):
+            return None
+
+def main():
+    # Get available themes
+    themes = list(find_themes())
+    if not themes:
+        print("No GTK themes found!")
+        return
+    
+    # Start curses interface
+    selected_theme = curses.wrapper(theme_selector, themes)
+    
+    if selected_theme:
+        try:
+            update_gtk_settings(selected_theme)
+            print(f"Theme updated to: {selected_theme}")
+            print("Please restart your applications to apply the new theme.")
+        except Exception as e:
+            print(f"Error updating theme: {e}")
+    else:
+        print("Theme selection cancelled.")
+
+if __name__ == "__main__":
+    main()

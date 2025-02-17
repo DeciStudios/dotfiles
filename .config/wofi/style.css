@@ -1,36 +1,30 @@
-@define-color primary-color rgb(69,238,105);
-@define-color primary-gradient rgba(45, 238, 105, 0.93);
-@define-color secondary-gradient rgba(0, 255, 153, 0.93);
+@import url(".config/waybar/colors.css");
 
-
-@define-color secondary-bg rgb(39,50,63);
-@define-color bg-color rgba(29, 38, 47,1.0);
-@define-color urgent-color rgb(239, 68, 68);
-
-@define-color default-icon-bg-grad-1 rgb(255,255,255);
-@define-color default-icon-bg-grad-2 rgb(200,200,200);
+@define-color default-icon-bg-grad-1 @primary-color;
+@define-color default-icon-bg-grad-2 @secondary-gradient;
 
 * {
-font-family: "FiraCode Nerd Font";
-font-weight: 500;
-transition: all 0.1s;
+/*font-family: "FiraCode Nerd Font";*/
+  font-family: "Noto Sans Nerd Font";
+  font-weight: 500;
+  transition: all 0.1s;
 }
 
 window {
-    /*border: double 2px transparent;*/
-    /*background-origin: border-box;*/
-    /*background-clip: padding-box, border-box;*/
-    /*background-image: linear-gradient(@bg-color,@bg-color), linear-gradient(45deg, @primary-gradient, @secondary-gradient);*/
+    border: double 2px transparent;
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+    background-image: linear-gradient(@bg-color,@bg-color), linear-gradient(45deg, @primary-color, @secondary-gradient);
     border-radius: 10px; /* Apply border-radius */
     color: @primary-color;
-    background-color: @bg-color;
+    /*background-color: @bg-color;*/
     transition-property: background-color;
     transition-duration: .5s;
 }
 #img {
     margin: 10px 10px;
     /*background-image: linear-gradient(45deg, @default-icon-bg-grad-1, @default-icon-bg-grad-2);*/
-    background-image: linear-gradient(45deg, @primary-gradient, @secondary-gradient);
+    background-image: linear-gradient(45deg, @primary-color, @secondary-gradient);
     border-radius: 10px;
     padding: 3px;
 }
@@ -41,37 +35,41 @@ window {
     padding: 3px;
 }
 #input {
-margin: 5px;
-border: none;
-border-radius: 10px;
-color: @primary-color;
-background-color: @secondary-bg;
+  margin: 5px;
+  border: none;
+  border-radius: 10px;
+  color: @primary-color;
+  background-color: @secondary-bg;
+}
+
+#input:selected {
+
 }
 
 #inner-box {
-margin: 5px;
-border: none;
-background-color: @secondary-bg;
-border-radius: 10px;
+  margin: 5px;
+  border: none;
+  background-color: @secondary-bg;
+  border-radius: 10px;
 }
 
 #outer-box {
-margin: 5px;
-border: none;
-border-radius: 10px;
-background-color: @bg-color;
+  margin: 5px;
+  border: none;
+  border-radius: 10px;
+  background-color: @bg-color;
 }
 
 #scroll {
-margin: 0px;
-border: none;
-border-radius: 10px;
+  margin: 0px;
+  border: none;
+  border-radius: 10px;
 }
 
 #text {
-margin: 5px;
-border: none;
-color: @primary-color;
+  margin: 5px;
+  border: none;
+  color: @primary-color;
 }
 
 #entry{
@@ -80,12 +78,12 @@ color: @primary-color;
 
 
 #entry:selected {
-background-image: linear-gradient(45deg, @primary-gradient, @secondary-gradient);
-border-radius: 10px;
-outline: none;
-color: @bg-color;
+  background-image: linear-gradient(45deg, @primary-color, @secondary-gradient);
+  border-radius: 10px;
+  outline: none;
+  color: @bg-color;
 }
 
 #entry:selected #text {
   color: @bg-color;
-  }
+}
