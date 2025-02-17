@@ -3,3 +3,4 @@ symlinked_directories.txt
 /backup
 .tracker
 .enabled
+/.config/tmux/plugins
