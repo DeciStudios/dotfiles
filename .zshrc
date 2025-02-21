@@ -34,5 +34,14 @@ export PATH="$HOME/.local/bin:$HOME/.fnm:$PATH"
 alias vi="nvim"
 alias yay="paru"
 
+
+# Setup fnm
 eval "$(fnm env)"
+
+# Setup EMSDK/Emscripten
 eval "$(EMSDK_QUIET=1 /usr/lib/emsdk/emsdk_env.sh)"
+
+# Setup ssh agent
+# if ! pgrep -u "$USER" ssh-agent > /dev/null; then
+#     eval "$(ssh-agent -s)"
+# fi
