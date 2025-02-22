@@ -5,7 +5,6 @@
 .zsh_history
 .config/hypr
 .config/kitty
-.config/ghostty
 .config/waybar
 .config/wofi
 .config/yazi
