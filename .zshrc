@@ -1,47 +1,25 @@
-# Path to your Oh My Zsh installation
-export ZSH="$HOME/.oh-my-zsh"
-
-# Set the ZSH theme (choose one)
-# ZSH_THEME="robbyrussell"
-# If you want Pure prompt instead, disable the theme and uncomment below:
-# fpath+="$HOME/.zsh/pure"
-# autoload -U promptinit; promptinit
-# prompt pure
-
-# Enable plugins (remove "z" if you choose not to load the external z.sh)
-plugins=(
-  git
-  common-aliases
-  rand-quote
-  sudo
-  yarn
-  colored-man-pages
-  colorize
-  cp
-  # Remove z from here if using an external z.sh OR remove external source instead
-  zsh-z
-)
-
-# Source Oh My Zsh
-source "$ZSH/oh-my-zsh.sh"
-# Linux-specific configuration
-source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-
-# Pure prompt (Disabled as I switched to starship.rs)
-# fpath+=($HOME/.zsh/pure)
-# autoload -U promptinit; promptinit
-# prompt pure
+# Load zsh/completion
+autoload -Uz compinit && compinit
 
 
-# Starship.rs
+# Load Antidote from ~/.config/zsh
+source "$HOME/.antidote/antidote.zsh"
+antidote bundle < "$HOME/.config/zsh/plugins.txt" > "$HOME/.config/zsh/plugins.zsh"
+source "$HOME/.config/zsh/plugins.zsh"
+
+# Load Starship prompt
+export STARSHIP_CONFIG="$HOME/.config/zsh/starship.toml"
 eval "$(starship init zsh)"
 
 
-# Environment setup
+
+# Adding FNM and .local/bin
 export PATH="$HOME/.local/bin:$HOME/.fnm:$PATH"
+
+# Aliases
+alias vim="nvim"
 alias vi="nvim"
 alias yay="paru"
-
 
 # Setup fnm
 eval "$(fnm env)"
@@ -49,9 +27,5 @@ eval "$(fnm env)"
 # Setup EMSDK/Emscripten
 eval "$(EMSDK_QUIET=1 /usr/lib/emsdk/emsdk_env.sh)"
 
-# Setup ssh agent
-# if ! pgrep -u "$USER" ssh-agent > /dev/null; then
-#     eval "$(ssh-agent -s)"
-# fi
-# export QT_QPA_PLATFORMTHEME=qt6ct
+# Setup Qt theme
 export QT_STYLE_OVERRIDE=Kvantum
