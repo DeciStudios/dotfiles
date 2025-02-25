@@ -2,7 +2,7 @@
 export ZSH="$HOME/.oh-my-zsh"
 
 # Set the ZSH theme (choose one)
-ZSH_THEME="robbyrussell"
+# ZSH_THEME="robbyrussell"
 # If you want Pure prompt instead, disable the theme and uncomment below:
 # fpath+="$HOME/.zsh/pure"
 # autoload -U promptinit; promptinit
@@ -26,9 +26,17 @@ plugins=(
 source "$ZSH/oh-my-zsh.sh"
 # Linux-specific configuration
 source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-fpath+=($HOME/.zsh/pure)
-autoload -U promptinit; promptinit
-prompt pure
+
+# Pure prompt (Disabled as I switched to starship.rs)
+# fpath+=($HOME/.zsh/pure)
+# autoload -U promptinit; promptinit
+# prompt pure
+
+
+# Starship.rs
+eval "$(starship init zsh)"
+
+
 # Environment setup
 export PATH="$HOME/.local/bin:$HOME/.fnm:$PATH"
 alias vi="nvim"
@@ -45,3 +53,5 @@ eval "$(EMSDK_QUIET=1 /usr/lib/emsdk/emsdk_env.sh)"
 # if ! pgrep -u "$USER" ssh-agent > /dev/null; then
 #     eval "$(ssh-agent -s)"
 # fi
+# export QT_QPA_PLATFORMTHEME=qt6ct
+export QT_STYLE_OVERRIDE=Kvantum
