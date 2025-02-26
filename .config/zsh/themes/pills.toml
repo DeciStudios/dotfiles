@@ -26,8 +26,27 @@ add_newline = true
 #   normal: dark gray / yellow / white palette.
 #   light: pastel light colors.
 # To change the colors: change to the corresponding palette.
-palette = "old"
+palette = "catppuccin"
 
+
+
+[palettes.catppuccin]
+arrow = "#cdd6f4"
+os = "#f38ba8"
+os_admin = "#f38ba8"
+directory = "#a6e3a1"
+node = "#a6e3a1"
+time = "#cba6f7"
+git = "#f5c2e7"
+git_status = "#94e2d5"
+python = "#f2cdcd"
+conda = "#f9e2af"
+java = "#f38ba8"
+rust = "#fab387"
+clang = "#74c7ec"
+duration = "#f9e2af"
+text_color = "#1e1e2e"
+text_light = "#1e1e2e"
 
 [palettes.old]
 arrow = "#353535"
