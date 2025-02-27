@@ -4,7 +4,7 @@ source "$(dirname $0)/bindings.zsh"
 
 #Start tmux if not already open
 if command -v tmux &> /dev/null && [ -z "$TMUX" ]; then
-    tmux attach-session -t default || tmux new-session -s default
+    tmux # attach-session -t default || tmux new-session -s default
 fi
 
 
