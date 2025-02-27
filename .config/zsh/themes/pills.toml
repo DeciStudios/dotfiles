@@ -2,7 +2,6 @@ format = """\
 [╭╴](fg:arrow)\
 $username\
 $directory\
-$time\
 (\
     $git_branch\
     $git_status\
