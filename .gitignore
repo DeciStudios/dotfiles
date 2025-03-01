@@ -4,3 +4,4 @@ symlinked_directories.txt
 .tracker
 .enabled
 /.config/tmux/plugins
+.config/zsh/plugins.zsh
