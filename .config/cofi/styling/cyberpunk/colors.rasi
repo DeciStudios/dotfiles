@@ -1,0 +1,12 @@
+* {
+    BG:    #120b10;  /* Dark cyberpunk background */
+    BGA:   #FF0055;  /* Bright neon pink (Focused) */
+    FG:    #FF0055;  /* Cyberpunk red (Text) */
+    FGA:   #d57bff;  /* Purple glow */
+    BDR:   #FF0055;  /* Border color */
+    SEL:   #120b10;  /* Selection background */
+    UGT:   #00FFC8;  /* Urgent highlight (Neon cyan) */
+    IMG:   #fffc58;  /* Accent yellow */
+    OFF:   #6766b3;  /* Muted purple (Inactive elements) */
+    ON:    #FF0055;  /* Active red glow */
+}

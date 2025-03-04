@@ -17,4 +17,4 @@ belak/zsh-utils path:editor
 belak/zsh-utils path:history
 
 #p10k
-romkatv/powerlevel10k
+#romkatv/powerlevel10k

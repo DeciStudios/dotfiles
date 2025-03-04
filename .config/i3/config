@@ -10,7 +10,7 @@
 # Please see https://i3wm.org/docs/userguide.html for a complete reference!
 
 set $mod Mod4
-set $colorscheme vscode_dark
+set $colorscheme cyberpunk
 # Font for window titles. Will also be used by the bar unless a different font
 # is used in the bar {} block below.
 font pango:NotoSans Nerd Font 11
@@ -31,10 +31,10 @@ for_window [class="pavucontrol" instance="pavucontrol"] floating enable move pos
 for_window [class="Blueberry.py" instance="blueberry.py"] floating enable move position 1390 px 25 px resize set 530 px 400 px
 for_window [class="Blueman-manager" instance="blueman-manager"] floating enable move position 1390 px 25 px resize set 530 px 400 px
 
-for_window [class="Audiomanager" instance="audiomanager"] floating enable move position 1420 px 25 px resize set 500 px 160 px
+for_window [class="pipewire-controller"] floating enable move position 1420 px 25 px resize set 500 px 160 px
 for_window [class="kitty" title="bluetuith-applet"] floating enable move position 1280 px 25 px resize set 640 px 350 px
 
-for_window [class="New Hauler Game"] floating enable 
+for_window [class="New Hauler Game"] floating enable
 # Set GTK theme for GNOME Software
 for_window [class="org.gnome.Software"] exec --no-startup-id env GTK_THEME=Nordic gnome-software
 
@@ -71,7 +71,7 @@ exec --no-startup-id lockscreen-wallpaper
 
 bindsym $mod+F2 exec --no-startup-id ~/.config/i3/picom.sh
 bindsym $mod+L exec --no-startup-id betterlockscreen -l blur
-exec --no-startup-id picom 
+exec --no-startup-id picom
 # Use pactl to adjust volume in PulseAudio.
 set $refresh_i3status killall -SIGUSR1 i3status
 bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +10% && $refresh_i3status
@@ -94,7 +94,7 @@ floating_modifier $mod
 tiling_drag modifier titlebar
 
 # start a terminal
-bindsym $mod+Return exec wezterm
+bindsym $mod+Return exec kitty
 
 # kill focused window
 bindsym $mod+q kill
@@ -104,9 +104,9 @@ bindsym $mod+q kill
 # A more modern dmenu replacement is rofi:
 #bindsym $mod+d exec --no-startup-id ~/.config/rofi/launchers/type-2/launcher.sh
 #bindsym $mod+p exec --no-startup-id ~/.config/rofi/powermenu/type-2/powermenu.sh
-bindsym $mod+d exec --no-startup-id cofi drun 1 $colorscheme
+bindsym $mod+d exec --no-startup-id ~/.local/bin/cofi drun 1 $colorscheme
 bindsym $mod+period exec --no-startup-id ~/.config/i3/rofimoji.sh $colorscheme
-bindsym $mod+p exec --no-startup-id cofi powermenu 1 $colorscheme
+bindsym $mod+p exec --no-startup-id ~/.local/bin/cofi powermenu 1 $colorscheme
 
 
 
@@ -250,7 +250,7 @@ bindsym $mod+r mode "resize"
 
 default_border pixel 0
 for_window[class="^.*"] border pixel 1
-for_window[class="Audiomanager"] border pixel 0
+for_window[class="pipewire-controller"] border pixel 0
 for_window[class="Blueberry.py"] border pixel 0
 for_window[class="Blueman-manager"] border pixel 0
 smart_gaps off
@@ -259,7 +259,7 @@ gaps outer 0
 # Start i3bar to display a workspace bar (plus the system information i3status
 # finds out, if available)
 exec_always --no-startup-id ~/.config/i3/polybar.sh &
-client.focused          #569CD6 #569CD6 #569CD6 #569CD6
-client.unfocused        #4e4e4e #4e4e4e #4e4e4e #4e4e4e
-client.focused_inactive #4e4e4e #4e4e4e #4e4e4e #4e4e4e
-client.urgent           #D16969 #D16969 #D16969 #D16969
+client.focused          #FF0055 #FF0055 #FF0055 #FF0055
+client.unfocused        #182333 #182333 #182333 #182333
+client.focused_inactive #182333 #182333 #182333 #182333
+client.urgent           #00FFC8 #00FFC8 #00FFC8 #00FFC8

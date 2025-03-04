@@ -26,32 +26,32 @@ else
 	if [[ "$layout" == "TRUE" ]]; then
   # Section 1
 
-		shutdown=""
-		reboot=""
-		lock=""
-		suspend=""
-		logout=""
+		# shutdown=""
+		# reboot=""
+		# lock=""
+		# suspend=""
+		# logout=""
   # Section 2
-#		shutdown="󰐥"
-#		reboot="󰜉"
-#		lock="󰍁"
-#		suspend="󰒲"
-#		logout="󰍃 "
+	shutdown="󰐥"
+	reboot="󰜉"
+	lock="󰍁"
+	suspend="󰒲"
+	logout="󰍃 "
 
 
 	else
   # Section 1
-		shutdown=" Shutdown"
-		reboot=" Restart"
-		lock=" Lock"
-		suspend=" Sleep"
-		logout=" Logout"
+		# shutdown=" Shutdown"
+		# reboot=" Restart"
+		# lock=" Lock"
+		# suspend=" Sleep"
+		# logout=" Logout"
   # Section 2
-#		shutdown="󰐥Shutdown"
-#		reboot="󰜉 Restart"
-#		lock="󰍁 Lock"
-#		suspend="󰒲Sleep"
-#		logout="󰍃 Logout"
+	shutdown="󰐥Shutdown"
+	reboot="󰜉 Restart"
+	lock="󰍁 Lock"
+	suspend="󰒲Sleep"
+	logout="󰍃 Logout"
 	fi
 	ddir="$script_dir/type-$launcher_type"
 fi

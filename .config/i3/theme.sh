@@ -11,8 +11,6 @@ fi
 THEME=$1
 CONFIG_DIR="$HOME/.config/i3"
 POLYBAR_CONFIG="$HOME/.config/polybar/config.ini"
-NVIM_CONFIG="$HOME/.config/nvim/lua/custom/chadrc.lua"
-NVIM_INIT="$HOME/.config/nvim/init.lua"
 WEZTERM_CONFIG="$HOME/.config/wezterm/wezterm.lua"
 WEZTERM_COLOR_SCHEMES="$HOME/.config/wezterm/colors.lua"
 
@@ -27,9 +25,6 @@ sed -i "s|include-file = \"colors/.*.ini\"|include-file = \"colors/${THEME}.ini\
 echo "Updated Polybar config to use ${THEME}"
 
 # Update Neovim config
-sed -i "s/theme = '.*'/theme = '${THEME}'/" "$NVIM_CONFIG"
-nvim -c "source $NVIM_INIT" -c 'q'
-echo "Updated Neovim config to use ${THEME}"
 
 # Get the colors from the theme file
 THEME_COLORS=$(grep -E 'client\.focused|client\.unfocused|client\.focused_inactive|client\.urgent' "${CONFIG_DIR}/colors/${THEME}.conf")
