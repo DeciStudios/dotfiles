@@ -20,7 +20,7 @@ source "$DIRECTORY_ZSH_CONFIG/bindings.zsh"
 
 
 #Start tmux if not already open
-source "$DIRECTORY_ZSH_CONFIG/tmux.zsh"
+# source "$DIRECTORY_ZSH_CONFIG/tmux.zsh"
 
 
 # Adding FNM and .local/bin
