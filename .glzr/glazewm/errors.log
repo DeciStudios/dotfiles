@@ -72,3 +72,20 @@
 [2m2025-02-06T20:41:37.860907Z[0m [31mERROR[0m [2mglazewm[0m[2m:[0m Invalid window handle. (0x80070578)
 [2m2025-02-06T20:41:38.188895Z[0m [31mERROR[0m [2mglazewm[0m[2m:[0m Invalid window handle. (0x80070578)
 [2m2025-02-06T20:41:38.586179Z[0m [31mERROR[0m [2mglazewm[0m[2m:[0m Invalid window handle. (0x80070578)
+[2m2025-04-13T23:27:24.996254Z[0m [31mERROR[0m [2mglazewm[0m[2m:[0m Failed to execute 'zebar'.
+
+Error: The operation was canceled by the user. (0x800704C7)
+[2m2025-04-14T00:13:05.238587Z[0m [31mERROR[0m [2mglazewm[0m[2m:[0m Program path is not valid for command '%ProgramFiles%/WezTerm/wezterm-gui.exe'.
+[2m2025-04-14T00:13:22.171262Z[0m [31mERROR[0m [2mglazewm[0m[2m:[0m Program path is not valid for command '%ProgramFiles%/WezTerm/wezterm-gui.exe'.
+[2m2025-04-14T00:14:14.178193Z[0m [31mERROR[0m [2mglazewm[0m[2m:[0m Program path is not valid for command '%ProgramFiles%/WezTerm/wezterm-gui.exe'.
+[2m2025-04-14T00:16:39.853091Z[0m [31mERROR[0m [2mglazewm[0m[2m:[0m Program path is not valid for command '%ProgramFiles%/WezTerm/wezterm-gui.exe'.
+[2m2025-04-14T00:21:09.966809Z[0m [31mERROR[0m [2mglazewm[0m[2m:[0m Program path is not valid for command '%ProgramFiles%/WezTerm/wezterm-gui.exe'.
+[2m2025-04-14T00:55:50.694659Z[0m [31mERROR[0m [2mglazewm[0m[2m:[0m Command doesn't have an ending `"`: '"%UserProfile%/scoop/apps/wezterm/current/wezterm-gui.exe"'.
+[2m2025-04-14T00:57:55.953513Z[0m [31mERROR[0m [2mglazewm[0m[2m:[0m Command doesn't have an ending `"`: '"%UserProfile%/scoop/apps/wezterm/current/wezterm-gui.exe"'.
+[2m2025-04-14T00:57:59.767947Z[0m [31mERROR[0m [2mglazewm[0m[2m:[0m Command doesn't have an ending `"`: '"%UserProfile%/scoop/apps/wezterm/current/wezterm-gui.exe"'.
+[2m2025-04-14T00:58:11.896516Z[0m [31mERROR[0m [2mglazewm[0m[2m:[0m Command doesn't have an ending `"`: '"%UserProfile%/scoop/apps/wezterm/current/wezterm-gui.exe"'.
+[2m2025-04-14T00:58:24.051535Z[0m [31mERROR[0m [2mglazewm[0m[2m:[0m Program path is not valid for command ''%UserProfile%/scoop/apps/wezterm/current/wezterm-gui.exe''.
+[2m2025-04-14T00:58:25.875087Z[0m [31mERROR[0m [2mglazewm[0m[2m:[0m Program path is not valid for command ''%UserProfile%/scoop/apps/wezterm/current/wezterm-gui.exe''.
+[2m2025-04-14T13:08:24.260256Z[0m [31mERROR[0m [2mglazewm[0m[2m:[0m Program path is not valid for command ''%UserProfile%/scoop/apps/wezterm/current/wezterm-gui.exe''.
+[2m2025-04-14T13:08:25.480238Z[0m [31mERROR[0m [2mglazewm[0m[2m:[0m Program path is not valid for command ''%UserProfile%/scoop/apps/wezterm/current/wezterm-gui.exe''.
+[2m2025-04-14T13:11:05.215095Z[0m [31mERROR[0m [2mglazewm[0m[2m:[0m Program path is not valid for command ''%UserProfile%/scoop/apps/wezterm/current/wezterm-gui.exe''.
