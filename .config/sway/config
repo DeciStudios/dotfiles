@@ -219,8 +219,13 @@ smart_gaps off
 gaps inner 10
 gaps outer 20
 
-default_border none
+# Use pixel borders
+for_window [class="^.*"] border pixel 2
+# Focused window: 2px border with a visible color
 
+# Unfocused windows: 0px border (effectively no outline)
+client.unfocused        #00000000 #00000000 #00000000 #00000000 #00000000
+client.focused          #89b4fa   #89b4fa #89b4fa  #89b4fa #89b4fa
 
 
 
