@@ -2,7 +2,7 @@
 
 import os
 import sys
-
+import subprocess
 # Define constants
 wallpapers_dir = os.path.join(os.getenv('HOME'), 'Pictures', 'Wallpapers')
 last_selected_file = os.path.join(os.getenv('HOME'), '.last_selected_wallpaper')
@@ -16,7 +16,7 @@ def select_wallpaper(style=default_style):
     options = get_wallpapers_list()
     for i, opt in enumerate(options, 1):
         print(f"{i}. {opt}")
-    
+
     while True:
         try:
             choice = int(input("Enter number to set wallpaper (0 to exit): "))
@@ -84,13 +84,36 @@ def get_wallpapers_list():
     return wallpapers
 
 # Function to set wallpaper using system command
+
+
 def set_wallpaper(filename, style=default_style):
-    style_options = ['fill', 'center', 'max', 'tile', 'scale']
-    if style not in style_options:
-        style = default_style
-        print(f"Invalid style option. Using default: {default_style}")
-    
-    os.system(f"feh --bg-{style} {os.path.join(wallpapers_dir, filename)}")
+    full_path = os.path.join(wallpapers_dir, filename)
+    style_map = {
+        'fill': 'fill',
+        'center': 'center',
+        'max': 'fit',
+        'tile': 'tile',
+        'scale': 'stretch'
+    }
+
+    swaybg_style = style_map.get(style, 'fill')  # fallback to 'fill'
+
+    if os.getenv("WAYLAND_DISPLAY"):  # Wayland (Sway)
+        print(f"Using swaybg to set wallpaper in Wayland with style: {swaybg_style}")
+        # Kill previous swaybg instance if any
+        subprocess.call(['pkill', 'swaybg'])
+        # Start new one
+        subprocess.Popen([
+            'swaybg',
+            '--mode', swaybg_style,
+            '--image', full_path
+        ])
+    elif os.getenv("DISPLAY"):  # X11 (i3, etc.)
+        print(f"Using feh to set wallpaper in X11 with style: {style}")
+        os.system(f"feh --bg-{style} '{full_path}'")
+    else:
+        print("Could not detect display environment (X11 or Wayland). Wallpaper not set.")
+
 
 # Function to read last selected wallpaper and style from file
 def read_last_selected():

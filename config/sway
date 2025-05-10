@@ -1,0 +1,10 @@
+.zshrc
+.config/nvim
+.config/tmux
+.config/zsh
+.config/kitty
+.config/sway
+.config/waybar_sway > .config/waybar
+.config/wofi_sway > .config/wofi
+.local/bin/wallpaper
+.local/bin/lockscreen-wallpaper

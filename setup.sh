@@ -36,9 +36,22 @@ link_dotfiles_from_config() {
     while IFS= read -r line || [ -n "$line" ]; do
         # Skip empty lines and comments
         [[ -z "$line" || "$line" =~ ^#.*$ ]] && continue
-        
-        local src="$SCRIPT_DIR/$line"
-        local dest="$HOME/$line"
+
+        # Check if line contains custom destination (using > syntax)
+        if [[ "$line" =~ (.*)\ *\>\ *(.*) ]]; then
+            local src_path="${BASH_REMATCH[1]}"
+            local dest_path="${BASH_REMATCH[2]}"
+
+            # Trim whitespace
+            src_path="$(echo "$src_path" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')"
+            dest_path="$(echo "$dest_path" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')"
+
+            local src="$SCRIPT_DIR/$src_path"
+            local dest="$HOME/$dest_path"
+        else
+            local src="$SCRIPT_DIR/$line"
+            local dest="$HOME/$line"
+        fi
 
         if [ ! -e "$src" ]; then
             echo "Warning: $src does not exist, skipping."
