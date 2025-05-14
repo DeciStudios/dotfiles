@@ -1,5 +1,5 @@
 .zshrc
 .config/nvim
 .config/tmux
-.z
-.zsh_history
+.config/zsh
+.config/kitty
