@@ -17,9 +17,12 @@ set $right l
 set $term kitty
 set $screenshot  grim -g "$(slurp -d)" - | swappy -f -
 # Your preferred application launcher
-set $menu wofi --show drun
+set $dmenu wofi --show drun
+set $rmenu wofi --show run
 set $fm thunar
-exec wallpaper -r
+exec ~/.local/bin/wallpaper -r
+
+exec blueman-applet
 
 ### Output configuration
 #
@@ -68,9 +71,9 @@ bindsym $mod+Return exec $term
 
     # Kill focused window
 bindsym $mod+q kill
-
+bindsym $mod+r exec $rmenu
     # Start your launcher
-bindsym $mod+d exec $menu
+bindsym $mod+d exec $dmenu
 bindsym $mod+f exec $fm
     # Drag floating windows by holding down $mod and left mouse button.
     # Resize them with right mouse button + $mod.
@@ -183,7 +186,7 @@ mode "resize" {
     bindsym Return mode "default"
     bindsym Escape mode "default"
 }
-bindsym $mod+r mode "resize"
+bindsym $mod+Mod1+r mode "resize"
 #
 # Utilities:
 #
@@ -197,7 +200,7 @@ bindsym $mod+r mode "resize"
     bindsym --locked XF86MonBrightnessUp exec brightnessctl set 5%+
     # Special key to take a screenshot with grim
     bindsym Print exec grim
-
+    bindsym XF86AudioPlay exec playerctl play-pause
 #
 # Status Bar:
 #
@@ -215,22 +218,34 @@ bindsym $mod+r mode "resize"
 #         inactive_workspace #32323200 #32323200 #5c5c5c
 #     }
 # }
-smart_gaps off
-gaps inner 10
-gaps outer 20
 
-# Use pixel borders
-for_window [class="^.*"] border pixel 2
-# Focused window: 2px border with a visible color
+# class                 border  backgr. text    indicator child_border
+client.focused          #6272a4 #285577 #ffffff #2e9ef4   #6272a4
+client.focused_inactive #282a36 #5f676a #ffffff #484e50   #282a36
+client.unfocused        #282a36 #222222 #888888 #292d2e   #282a36
+client.urgent           #282a36 #900000 #ffffff #900000   #282a36
+client.placeholder      #282a36 #0c0c0c #ffffff #000000   #282a36
 
-# Unfocused windows: 0px border (effectively no outline)
-client.unfocused        #00000000 #00000000 #00000000 #00000000 #00000000
-client.focused          #89b4fa   #89b4fa #89b4fa  #89b4fa #89b4fa
+#
+# Status Bar:
+#
+# Read `man 5 sway-bar` for more information about this section.
+bar {
+    swaybar_command waybar
+        position top
+}
+
+bindsym $mod+g gaps inner all plus 10
+bindsym $mod+Shift+g gaps inner all minus 10
+bindsym $mod+Control+g gaps outer all plus 10
+bindsym $mod+Control+Shift+g gaps outer all minus 10
+
+default_border pixel 2
+gaps inner 30
 
 
-
-for_window [app_id="zen-browser" title="^Picture-in-Picture$"] \
-    floating enable, move position 877 450, sticky enable
+for_window [title="Picture-in-Picture"] floating enable, resize set width 400 px height 225 px, move position 1268 px 807 px, sticky on
+for_window [title="Picture in picture"] floating enable, resize set width 400 px height 225 px, move position 1268 px 807 px, sticky on
 
 
 

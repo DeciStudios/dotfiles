@@ -8,3 +8,5 @@
 .config/wofi_sway > .config/wofi
 .local/bin/wallpaper
 .local/bin/lockscreen-wallpaper
+.local/bin/pipevolmix-launch
+.local/bin/pipevolmix
