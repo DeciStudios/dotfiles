@@ -7,6 +7,8 @@ eval "$(starship init zsh)"
 #=============================
 
 
+
+
 #=========== P10k ============
 # if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
 #   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
@@ -24,7 +26,7 @@ source "$DIRECTORY_ZSH_CONFIG/bindings.zsh"
 
 
 # Adding FNM and .local/bin
-export PATH="$HOME/.local/bin:$HOME/.fnm:$PATH"
+export PATH="$HOME/.local/bin:$HOME/.fnm:$HOME/.nimble/bin:$PATH"
 
 # Aliases
 alias vim="nvim"
@@ -36,6 +38,13 @@ eval "$(fnm env)"
 
 # Setup EMSDK/Emscripten
 eval "$(EMSDK_QUIET=1 /usr/lib/emsdk/emsdk_env.sh)"
+
+# Setup devkitpro
+export DEVKITPRO="/opt/devkitpro"
+export DEVKITARM="/opt/devkitpro/devkitARM"
+export DEVKITPPC="/opt/devkitpro/devkitPPC"
+
+
 
 # Setup Qt theme
 export QT_STYLE_OVERRIDE=Kvantum
