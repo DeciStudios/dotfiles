@@ -1,0 +1,8 @@
+.zshrc
+.config/nvim
+.config/tmux
+.config/zsh
+.config/kitty
+.config/hypr2 > .config/hypr
+.config/waybar2 > .config/waybar
+.config/wofi2 > .config/wofi

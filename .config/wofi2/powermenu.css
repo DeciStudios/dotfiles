@@ -1,0 +1,27 @@
+
+#entry {
+    font-size: 60px; /* Large icons */
+    padding: 30px;  /* Increase button height */
+    margin: 15px;   /* Adds space between buttons */
+    border-radius: 10px;
+}
+
+#entry:selected {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+    /*opacity: 0;*/
+
+#input{
+        display: none;
+        margin: -1000px 5px; 
+}
+#entry {
+    font-size: 60px; /* Large icons */
+    padding: 30px;  /* Increase button height */
+    margin: 15px;   /* Adds space between buttons */
+    border-radius: 10px;
+}
+
+#entry:selected {
+    background-color: rgba(255, 255, 255, 0.2);
+  }

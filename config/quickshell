@@ -1,7 +1,0 @@
-.zshrc
-.config/nvim
-.config/tmux
-.config/zsh
-.config/kitty
-.config/quickshell
-.config/hypr_quickshell > .config/hypr

@@ -147,16 +147,16 @@ unlink_dotfiles() {
             if [ "$(basename "$actual_item")" == "/" ]; then
                 # Handle directories
                 echo "Removing symlink directory: $actual_item"
-                trash "$actual_item"
+                rm -rf "$actual_item"
             else
                 # Recursive cleanup for directories
                 unlink_dotfiles_recursive "$actual_item"
                 echo "Removing symlink directory: $actual_item"
-                trash "$actual_item"
+                rm -rf "$actual_item"
             fi
         elif [ -L "$actual_item" ]; then
             echo "Removing symlink: $actual_item"
-            trash "$actual_item"
+            rm -rf "$actual_item"
         else
             # Restore backup if available
             local backup_file="$BACKUP_DIR$(dirname "${actual_item#$HOME}")/$(basename "$actual_item")"
