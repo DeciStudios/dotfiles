@@ -2,7 +2,7 @@
    Wofi Theme — Default (using ~/.cur_theme/colors.css)
    ───────────────────────────────────────────── */
 
-@import url("~/.cur_theme/colors.css");
+@import url("/home/jackm/.cur_theme/colors.css");
 
 * {
   font-family: "Noto Sans Nerd Font";

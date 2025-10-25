@@ -2,8 +2,7 @@
    Waybar Theme — Default (uses ~/.cur_theme/colors.css)
    ───────────────────────────────────────────── */
 
-@import url("~/.cur_theme/colors.css");
-
+@import url("/home/jackm/.cur_theme/colors.css");
 * {
   font-family: "Noto Sans Nerd Font";
   font-size: 13px;

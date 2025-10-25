@@ -2,8 +2,7 @@
    nwg-dock Theme — Default (uses ~/.cur_theme/colors.css)
    ───────────────────────────────────────────── */
 
-@import url("~/.cur_theme/colors.css");
-
+@import url("/home/jackm/.cur_theme/colors.css");
 window {
   background: @bg;
   border-radius: 10px;
