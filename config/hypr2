@@ -2,7 +2,10 @@
 .config/nvim
 .config/tmux
 .config/zsh
-.config/kitty
+.config/kitty2 > .config/kitty
 .config/hypr2 > .config/hypr
 .config/waybar2 > .config/waybar
 .config/wofi2 > .config/wofi
+.local/bin/pipevolmix
+.local/bin/pipevolmix-launch
+.local/bin/gtkthemer
