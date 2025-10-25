@@ -1,0 +1,17 @@
+
+@define-color accent #5E81AC;  /* Primary accent (buttons, highlights) */
+@define-color accent-alt #81A1C1;
+
+@define-color bg #1E1E2E;      /* Background */
+@define-color bg-alt #2A2A3A;
+
+@define-color surface #2E3440; /* Panels, popups */
+@define-color surface-alt #3B4252;
+
+@define-color text #ECEFF4;    /* Normal text */
+@define-color text-muted #B0B7C3; /* Secondary text */
+
+@define-color warning #EBCB8B;
+@define-color error #BF616A;
+@define-color success #A3BE8C;
+@define-color info #88C0D0;

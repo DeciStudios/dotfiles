@@ -1,0 +1,52 @@
+#!/bin/sh
+
+# Base directory containing all themes
+THEME_DIR="$HOME/.config/hyprthemes"
+
+# Destination directory for the current theme
+CUR_THEME="$HOME/.cur_theme"
+
+# Default theme path
+DEFAULT_THEME="$THEME_DIR/default"
+
+# Function to switch to a given theme
+switch_theme() {
+    theme_path="$THEME_DIR/$1"
+
+    if [ ! -d "$theme_path" ]; then
+        echo "Error: theme '$1' not found."
+        exit 1
+    fi
+
+    mkdir -p "$CUR_THEME"
+
+    rm -f "$CUR_THEME/colors.css" "$CUR_THEME/colors.conf"
+
+    ln -s "$theme_path/colors.css" "$CUR_THEME/colors.css"
+    ln -s "$theme_path/colors.conf" "$CUR_THEME/colors.conf"
+
+    echo "Switched to theme: $1"
+    echo "→ $CUR_THEME/colors.css → $theme_path/colors.css"
+    echo "→ $CUR_THEME/colors.conf → $theme_path/colors.conf"
+}
+
+# Handle -d (default) flag
+if [ "$1" = "-d" ]; then
+    if [ ! -d "$DEFAULT_THEME" ]; then
+        echo "Error: default theme not found at $DEFAULT_THEME"
+        exit 1
+    fi
+    switch_theme "default"
+    exit 0
+fi
+
+# Otherwise, list available themes and prompt
+echo "Available themes:"
+themes=$(find "$THEME_DIR" -mindepth 1 -maxdepth 1 -type d -exec basename {} \;)
+echo "$themes"
+echo
+
+printf "Enter theme name: "
+read theme
+
+switch_theme "$theme"

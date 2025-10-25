@@ -9,3 +9,6 @@
 .local/bin/pipevolmix
 .local/bin/pipevolmix-launch
 .local/bin/gtkthemer
+.config/nwg-dock-hyprland
+.local/bin/hyprtheme
+.config/hyprtheme

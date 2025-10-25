@@ -1,99 +1,63 @@
+/* ─────────────────────────────────────────────
+   Waybar Theme — Default (uses ~/.cur_theme/colors.css)
+   ───────────────────────────────────────────── */
+
+@import url("~/.cur_theme/colors.css");
+
 * {
-    /* `otf-font-awesome` is required to be installed for icons */
-    
-    /*font-family: "FiraCode Nerd Font Regular", sans-serif;*/
-    font-family: "Noto Sans Nerd Font";
-    /*color: @primary-color;*/
-    font-size: 13px;
-
+  font-family: "Noto Sans Nerd Font";
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.1s ease;
+  color: @text;
 }
-@import url("colors.css");
 
+/* ─────────── Window ─────────── */
 window#waybar {
-    /*background-color: @bg-color;*/
-    
-    border: double 2px transparent;
-    background-origin: border-box;
-    background-clip: padding-box, border-box;
-    background-image: linear-gradient(@bg-color,@bg-color), linear-gradient(45deg, @primary-color, @secondary-gradient);
-    border-radius: 10px; /* Apply border-radius */
-    color: #ffffff;
-
-    transition-property: background-color;
-    transition-duration: .5s;
-    
+  background-color: @bg;
+  border: 2px solid @accent;
+  border-radius: 10px;
+  color: @text;
+  transition: background-color 0.5s ease, border-color 0.3s ease;
 }
 
 window#waybar.hidden {
-    opacity: 0.2;
+  opacity: 0.2;
 }
 
-/*
-window#waybar.empty {
-    background-color: transparent;
-}
-window#waybar.solo {
-    background-color: #FFFFFF;
-}
-*/
-
-window#waybar.termite {
-    background-color: #3F3F3F;
-}
-
-window#waybar.chromium {
-    background-color: #000000;
-    border: none;
-}
-
-#custom-volume-up, #custom-volume-down {
-  background-color: transparent;
-  color: @primary-color;
-  border-radius: 7px;
-  padding: 0 5px;
-  margin: 5px 4px;
-}
-
-#custom-volume-up:hover, #custom-volume-down:hover {
-  background-color: @primary-color;
-  color: @bg-color;
-}
+/* ─────────── Buttons ─────────── */
 button {
-    /* Use box-shadow instead of border so the text isn't offset */
-    box-shadow: inset 0 -3px transparent;
-    /* Avoid rounded borders under each button name */
-    border: none;
-    border-radius: 0;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
 }
 
-/* https://github.com/Alexays/Waybar/wiki/FAQ#the-workspace-buttons-have-a-strange-hover-effect */
 button:hover {
-    background: inherit;
+  background: inherit;
 }
 
-/* you can set a style on hover for any module like this */
-
+/* ─────────── Workspaces ─────────── */
 #workspaces button {
-    padding: 0 5px;
-    margin: 5px 4px;
-    background-color: transparent;
-    border-radius: 7px;
-    color: @primary-color;
+  padding: 0 6px;
+  margin: 4px;
+  border-radius: 6px;
+  background: transparent;
+  color: @accent;
 }
 
-#workspaces button:hover, #workspaces button.active{
-  background-color: @primary-color;
-  color: @bg-color;
+#workspaces button:hover,
+#workspaces button.active {
+  background: @accent;
+  color: @bg;
 }
-
 
 #workspaces button.urgent {
-    background-color: @urgent-color;
-    color: @bg-color;
+  background: @error;
+  color: @bg;
 }
 
-
-
+/* ─────────── Modules ─────────── */
 #clock,
 #battery,
 #cpu,
@@ -116,88 +80,49 @@ button:hover {
 #custom-weather,
 #custom-seperator,
 #mpd {
-    padding: 0 5px;
-    color: @primary-color;
-    border-radius: 10px;
-    margin: 4px 0px;
-    transition: all 0.1s;
+  padding: 0 6px;
+  margin: 4px 0;
+  border-radius: 6px;
+  color: @accent;
+  transition: all 0.15s ease;
 }
 
-#window,
-#workspaces {
-    margin: 0 4px;
+/* ─────────── Volume Buttons ─────────── */
+#custom-volume-up,
+#custom-volume-down {
+  background: transparent;
 }
 
-/* If workspaces is the leftmost module, omit left margin */
-.modules-left > widget:first-child > #workspaces {
-    margin-left: 0;
+#custom-volume-up:hover,
+#custom-volume-down:hover {
+  background: @accent;
+  color: @bg;
 }
 
-/* If workspaces is the rightmost module, omit right margin */
-.modules-right > widget:last-child > #workspaces {
-    margin-right: 0;
-}
-
-
-
-
-@keyframes blink {
-    to {
-        background-color: #ffffff;
-        color: #000000;
-    }
-}
-
-
-
-label:focus {
-    background-color: #000000;
-}
-
-#cpu {
-    color: @resources-color;
-}
-
+/* ─────────── Resource Colors ─────────── */
+#cpu,
 #memory {
-    color: @resources-color;
+  color: @info;
 }
 
 #disk {
-    background-color: #964B00;
+  color: @warning;
 }
 
-
-
-
-
-
-
+/* ─────────── Tray ─────────── */
 #tray {
-    background-color: transparent;
-}
-
-#tray > .passive {
-    -gtk-icon-effect: dim;
+  background: transparent;
 }
 
 #tray > .needs-attention {
-    -gtk-icon-effect: highlight;
-    background-color: @urgent-color;
+  background: @error;
 }
 
-
-
-
-
-
-
-
+/* ─────────── Scratchpad ─────────── */
 #scratchpad {
-    background: rgba(0, 0, 0, 0.2);
+  background: rgba(0, 0, 0, 0.2);
 }
 
 #scratchpad.empty {
-	background-color: transparent;
+  background: transparent;
 }
-
-

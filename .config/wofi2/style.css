@@ -1,75 +1,78 @@
-@import url(".config/waybar/colors.css");
+/* ─────────────────────────────────────────────
+   Wofi Theme — Default (using ~/.cur_theme/colors.css)
+   ───────────────────────────────────────────── */
 
-@define-color default-icon-bg-grad-1 @primary-color;
-@define-color default-icon-bg-grad-2 @secondary-gradient;
+@import url("~/.cur_theme/colors.css");
 
 * {
-  /*font-family: "FiraCode Nerd Font";*/
   font-family: "Noto Sans Nerd Font";
   font-weight: 500;
-  transition: all 0.1s;
+  transition: all 0.1s ease;
 }
 
+/* ─────────── Window ─────────── */
 window {
-  border: double 2px transparent;
-  background-origin: border-box;
-  background-clip: padding-box, border-box;
-  background-image:
-    linear-gradient(@bg-color, @bg-color),
-    linear-gradient(45deg, @primary-color, @secondary-gradient);
-  color: @primary-color;
-  /*background-color: @bg-color;*/
-  transition-property: background-color;
-  transition-duration: 0.5s;
-}
-#img {
-  margin: 10px 10px;
-  /*background-image: linear-gradient(45deg, @default-icon-bg-grad-1, @default-icon-bg-grad-2);*/
-  background-image: linear-gradient(45deg, @primary-color, @secondary-gradient);
-}
-
-
-#input {
-  margin: 5px;
-  border: none;
+  border: 2px solid @accent;
   border-radius: 10px;
-  color: @primary-color;
-  background-color: @secondary-bg;
+  background-color: @bg;
+  color: @text;
 }
 
-#input:selected {
+/* ─────────── Input Field ─────────── */
+#input {
+  margin: 8px;
+  padding: 6px 10px;
+  border: none;
+  border-radius: 8px;
+  background-color: @surface;
+  color: @text;
 }
 
-/* #inner-box { */
-/*   margin: 5px; */
-/*   border: none; */
-/*   background-color: @secondary-bg; */
-/* } */
+#input:focus {
+  border: 1px solid @accent;
+  background-color: @surface-alt;
+}
 
+/* ─────────── Outer Box ─────────── */
 #outer-box {
   margin: 5px;
   border: none;
-  background-color: @bg-color;
+  background-color: @bg;
 }
 
+/* ─────────── Scroll Area ─────────── */
 #scroll {
-  margin: 0px;
   border: none;
-  border-radius: 10px;
+  background-color: transparent;
 }
 
-#text {
-  margin: 5px;
+/* ─────────── Entry Items ─────────── */
+#entry {
   border: none;
-  color: @primary-color;
+  border-radius: 6px;
+  margin: 3px 6px;
+  padding: 6px;
+  background-color: transparent;
+  color: @text;
 }
 
 #entry:selected {
-  background-image: linear-gradient(45deg, @primary-color, @secondary-gradient);
-  outline: none;
-  color: @bg-color;
+  background: linear-gradient(45deg, @accent, @accent-alt);
+  color: @bg;
+}
+
+/* ─────────── Entry Text ─────────── */
+#text {
+  color: inherit;
 }
 
 #entry:selected #text {
-  color: @bg-color;
+  color: @bg;
+}
+
+/* ─────────── Icons (if used) ─────────── */
+#img {
+  margin: 8px;
+  border-radius: 6px;
+  background: linear-gradient(45deg, @accent, @accent-alt);
 }

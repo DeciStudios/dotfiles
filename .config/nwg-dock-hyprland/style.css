@@ -1,44 +1,52 @@
-@import url("colors.css");
-@import url("../ml4w/settings/dock-border.css");
+/* ─────────────────────────────────────────────
+   nwg-dock Theme — Default (uses ~/.cur_theme/colors.css)
+   ───────────────────────────────────────────── */
+
+@import url("~/.cur_theme/colors.css");
 
 window {
-  	background: @blur_background8;
-	border-radius: 10px;
-	border-style: solid;
-	border-color: @primary;
+  background: @bg;
+  border-radius: 10px;
+  border: 2px solid @accent;
 }
 
+/* Box surrounding the dock icons */
 #box {
-  	/* Define attributes of the box surrounding icons here */
-  	padding: 10px;
+  padding: 10px;
+  background: transparent;
 }
 
+/* Active window indicator */
 #active {
-	/* This is to underline the button representing the currently active window */
-	border-bottom: solid 0px;
-	border-color: @primary;
+  border-bottom: 2px solid @accent;
 }
 
+/* Icons and buttons */
 button, image {
-	background: none;
-	border-style: none;
-	box-shadow: none;
-	color: @primary;
+  background: none;
+  border: none;
+  box-shadow: none;
+  color: @accent;
 }
 
+/* Button styling */
 button {
-	padding: 4px;
-	margin-left: 4px;
-	margin-right: 4px;
-	color: @primary;
-	font-size: 12px
+  padding: 4px;
+  margin: 0 4px;
+  border-radius: 8px;
+  color: @accent;
+  font-size: 12px;
+  transition: all 0.15s ease;
 }
 
+/* Hover effect */
 button:hover {
-	background-color: @primary_container;
-	border-radius: 10px;
+  background: @accent;
+  color: @bg;
 }
 
+/* Focus effect (for keyboard navigation) */
 button:focus {
-	box-shadow: none;
+  outline: none;
+  box-shadow: 0 0 0 2px @accent-alt;
 }
