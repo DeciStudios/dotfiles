@@ -5,7 +5,7 @@ prompt=Search...
 normal_window=false
 location=center
 gtk-dark=true
-
+allow_images=true
 image_size=32
 insensitive=true
 allow_markup=true
