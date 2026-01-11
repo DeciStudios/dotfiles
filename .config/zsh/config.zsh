@@ -39,12 +39,26 @@ eval "$(fnm env)"
 # Setup EMSDK/Emscripten
 eval "$(EMSDK_QUIET=1 /usr/lib/emsdk/emsdk_env.sh)"
 
+# Setup Playdate SDK
+export PLAYDATE_SDK_PATH="$HOME/.local/share/playdate-sdk/"
+export PLAYDATE_LUACATS_PATH="$HOME/.local/share/playdate-luacats/"
+
+export PATH=$PATH:$PLAYDATE_SDK_PATH/bin
 # Setup devkitpro
 export DEVKITPRO="/opt/devkitpro"
 export DEVKITARM="/opt/devkitpro/devkitARM"
 export DEVKITPPC="/opt/devkitpro/devkitPPC"
 
+#setup espup
+. /home/jackm/export-esp.sh
 
+# pnpm
+export PNPM_HOME="/home/jackm/.local/share/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+# pnpm end
 
 # Setup Qt theme
 export QT_STYLE_OVERRIDE=Kvantum
