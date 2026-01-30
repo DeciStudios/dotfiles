@@ -15,5 +15,5 @@ source ~/.config/zsh/config.zsh
 
 ## [Completion]
 ## Completion scripts setup. Remove the following line to uninstall
-[[ -f /home/jackm/.dart-cli-completion/zsh-config.zsh ]] && . /home/jackm/.dart-cli-completion/zsh-config.zsh || true
+[[ -f "$HOME/.dart-cli-completion/zsh-config.zsh" ]] && . "$HOME/.dart-cli-completion/zsh-config.zsh" || true
 ## [/Completion]

@@ -6,7 +6,9 @@ export STARSHIP_CONFIG="$DIRECTORY_ZSH_CONFIG/starship.toml"
 eval "$(starship init zsh)"
 #=============================
 
-
+#======== RUST =============
+. "$HOME/.cargo/env"
+#==========================
 
 
 #=========== P10k ============
@@ -26,7 +28,7 @@ source "$DIRECTORY_ZSH_CONFIG/bindings.zsh"
 
 
 # Adding FNM and .local/bin
-export PATH="$HOME/.local/bin:$HOME/.fnm:$HOME/.nimble/bin:$PATH"
+export PATH="$HOME/.cargo/bin:$HOME/.local/bin:$HOME/.fnm:$HOME/.nimble/bin:$PATH"
 
 # Aliases
 alias vim="nvim"
@@ -34,10 +36,10 @@ alias vi="nvim"
 alias yay="paru"
 
 # Setup fnm
-eval "$(fnm env)"
+#eval "$(fnm env)"
 
 # Setup EMSDK/Emscripten
-eval "$(EMSDK_QUIET=1 /usr/lib/emsdk/emsdk_env.sh)"
+#eval "$(EMSDK_QUIET=1 /usr/lib/emsdk/emsdk_env.sh)"
 
 # Setup Playdate SDK
 export PLAYDATE_SDK_PATH="$HOME/.local/share/playdate-sdk/"
@@ -50,15 +52,18 @@ export DEVKITARM="/opt/devkitpro/devkitARM"
 export DEVKITPPC="/opt/devkitpro/devkitPPC"
 
 #setup espup
-. /home/jackm/export-esp.sh
+#. /home/jackm/export-esp.sh
 
 # pnpm
-export PNPM_HOME="/home/jackm/.local/share/pnpm"
+export PNPM_HOME="$HOME/.local/share/pnpm"
 case ":$PATH:" in
   *":$PNPM_HOME:"*) ;;
   *) export PATH="$PNPM_HOME:$PATH" ;;
 esac
 # pnpm end
+#brew
+#eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv zsh)"
 
+ 
 # Setup Qt theme
-export QT_STYLE_OVERRIDE=Kvantum
+#export QT_STYLE_OVERRIDE=Kvantum

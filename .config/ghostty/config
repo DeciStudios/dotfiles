@@ -1,9 +1,8 @@
 font-family = FiraCode Nerd Font
 font-size = 12
-theme = GruvboxDark
 shell-integration-features = no-cursor,sudo,no-title
 cursor-style = block
-# custom-shader = shaders/in-game-crt.glsl
+#custom-shader = shaders/in-game-crt.glsl
 # background-opacity = 0.96
 
 mouse-hide-while-typing = true

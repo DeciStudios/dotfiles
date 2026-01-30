@@ -2,4 +2,4 @@
 .config/nvim
 .config/tmux
 .config/zsh
-.config/kitty
+.config/ghostty
