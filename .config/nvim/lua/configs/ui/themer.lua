@@ -1,0 +1,68 @@
+local M = {}
+M.themes = {
+	{ name = "One Dark", colorscheme = "onedark" },
+	{ name = "One Light", colorscheme = "onelight" },
+	{ name = "One Dark Vivid", colorscheme = "onedark_vivid" },
+	{ name = "One Dark Pro", colorscheme = "onedark_dark" },
+	{ name = "Tokyo Night", colorscheme = "tokyonight" },
+	{ name = "Sonokai", colorscheme = "sonokai" },
+	{ name = "Nord", colorscheme = "nord" },
+	{ name = "Catppuccin", colorscheme = "catppuccin" },
+	{ name = "Eldritch", colorscheme = "eldritch" },
+	{ name = "Material", colorscheme = "material" },
+	{ name = "Oceanic Next", colorscheme = "OceanicNext" },
+	{ name = "Nightfox", colorscheme = "nightfox" },
+	{ name = "OneNord", colorscheme = "onenord" },
+	{ name = "Everforest", colorscheme = "everforest" },
+	{ name = "Gruvbox Baby", colorscheme = "gruvbox-baby" },
+	{
+		name = "Gruvbox Dark",
+		colorscheme = "gruvbox",
+		id = "gruvbox-dark",
+		setup = function()
+			vim.o.background = "dark"
+		end,
+	},
+	{
+		name = "Gruvbox Light",
+		colorscheme = "gruvbox",
+		id = "gruvbox-light",
+		setup = function()
+			vim.o.background = "light"
+		end,
+	},
+	{ name = "Cyberpunk", colorscheme = "cyberpunk" },
+
+	{ name = "Gruvbox Material", colorscheme = "gruvbox-material" },
+	{ name = "Everforest (Sainnhe)", colorscheme = "everforest" },
+	{ name = "GitHub", colorscheme = "github_dark" },
+	{ name = "VSCode", colorscheme = "vscode" },
+	{ name = "Tender", colorscheme = "tender" },
+	{ name = "Neon", colorscheme = "neon" },
+	{ name = "Kanagawa", colorscheme = "kanagawa" },
+	{ name = "Aquarium", colorscheme = "aquarium" },
+	{ name = "Tokyo Dark", colorscheme = "tokyodark" },
+	{ name = "Omni", colorscheme = "omni" },
+	{ name = "Juliana", colorscheme = "juliana" },
+	{ name = "Boo", colorscheme = "boo" },
+	{ name = "Nova", colorscheme = "nova" },
+	{ name = "Calvera Dark", colorscheme = "calvera" },
+	{ name = "Moonfly", colorscheme = "moonfly" },
+	{ name = "Nightfly", colorscheme = "nightfly" },
+	{ name = "Palenight", colorscheme = "palenight" },
+	{ name = "Falcon", colorscheme = "falcon" },
+	{ name = "Melange", colorscheme = "melange" },
+	{ name = "Doom One", colorscheme = "doom-one" },
+	{ name = "Monochrome", colorscheme = "monochrome" },
+	{ name = "Ayu", colorscheme = "ayu" },
+	{ name = "Edge", colorscheme = "edge" },
+	{ name = "Solarized", colorscheme = "solarized" },
+	{ name = "Dracula", colorscheme = "dracula" },
+	{ name = "Darcula", colorscheme = "darcula-dark" },
+	{ name = "Rose Pine", colorscheme = "rose-pine" },
+	{ name = "Everblush", colorscheme = "everblush" },
+	{ name = "Hardhacker", colorscheme = "hardhacker" },
+	{ name = "Zephyr", colorscheme = "zephyr" },
+}
+
+return M
