@@ -6,6 +6,8 @@ export STARSHIP_CONFIG="$DIRECTORY_ZSH_CONFIG/themes/pure.toml"
 eval "$(starship init zsh)"
 #=============================
 
+#zsh opts
+setopt INTERACTIVE_COMMENTS
 
 
 
@@ -46,3 +48,5 @@ case ":$PATH:" in
 esac
 # pnpm end
 
+
+alias gpdl="apkeep -i ~/.config/apkeep/apkeep.ini -d google-play"

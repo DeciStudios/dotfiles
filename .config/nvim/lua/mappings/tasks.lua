@@ -12,6 +12,7 @@ local function get_source_dir()
 	end
 	return "." -- Fallback to current directory if not found
 end
+
 local function get_playbit_source()
 	local paths = { ".", "source", "src" }
 	for _, path in ipairs(paths) do
@@ -36,6 +37,7 @@ local function run_in_horizontal_terminal(cmd)
 		vim.notify("Terminal not ready", vim.log.levels.WARN)
 	end
 end
+
 local function run_command(cmd)
 	local buf = vim.api.nvim_create_buf(false, true)
 	vim.api.nvim_buf_set_option(buf, "bufhidden", "wipe")
@@ -94,6 +96,13 @@ end
 
 M.tasks = {
 	n = {
+		-- Universal Makefile Run
+		["<leader>rm"] = {
+			function()
+				run_command({ "make" })
+			end,
+			"Run project Makefile",
+		},
 		["<leader>ro"] = {
 			function()
 				run_command({ "odin", "run", "." })
@@ -161,33 +170,12 @@ M.tasks = {
 		},
 
 		-- Playbit Neovim Keymaps
-		["<leader>bpbl"] = {
-			function()
-				run_command({ "sh", "-c", "lua build/love2d-debug.lua" })
-			end,
-			"Build Playbit project (Love2D)",
-		},
 
 		["<leader>rpbl"] = {
 			function()
-				run_command({ "sh", "-c", "lua build/love2d-debug.lua && love _love2d" })
+				run_command({ "sh", "-c", "lua .build/love2d.lua && love build/love2d/" })
 			end,
 			"Run Playbit project (Love2D)",
-		},
-
-		["<leader>bpbp"] = {
-			function()
-				local sdk = os.getenv("PLAYDATE_SDK_PATH") or "~/PlaydateSDK"
-				run_command({
-					"sh",
-					"-c",
-					string.format(
-						'lua build/playdate-debug.lua && rm -rf "$(basename "$PWD")".pdx && %s/bin/pdc _pdx "$(basename "$PWD")".pdx',
-						sdk
-					),
-				})
-			end,
-			"Build Playbit project (Playdate)",
 		},
 
 		["<leader>rpbp"] = {
@@ -197,7 +185,7 @@ M.tasks = {
 					"sh",
 					"-c",
 					string.format(
-						'lua build/playdate-debug.lua && rm -rf "$(basename "$PWD")".pdx && %s/bin/pdc _pdx "$(basename "$PWD")".pdx && %s/bin/PlaydateSimulator "$(basename "$PWD")".pdx',
+						'lua .build/playdate.lua && rm -rf "build/pdx/build.pdx" && %s/bin/pdc build/pdx "build/pdx/build.pdx" && %s/bin/PlaydateSimulator "build/pdx/build.pdx"',
 						sdk,
 						sdk
 					),

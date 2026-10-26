@@ -13,6 +13,7 @@ lsp.config("lua_ls", {
 		Lua = {
 			runtime = {
 				nonstandardSymbol = { "+=", "-=", "*=", "/=", "//=", "%=", "<<=", ">>=", "&=", "|=", "^=" },
+				plugin = { "./playbit.lua" },
 			},
 			diagnostics = {
 				globals = { "vim", "import" },
